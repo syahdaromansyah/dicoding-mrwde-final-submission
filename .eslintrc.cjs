@@ -9,11 +9,12 @@ module.exports = {
     'airbnb/hooks',
     'plugin:jsx-a11y/recommended',
     'plugin:react/recommended',
+    'plugin:@tanstack/eslint-plugin-query/recommended',
     'prettier',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
-  plugins: ['jsx-a11y', 'react-refresh', 'unused-imports'],
+  plugins: ['jsx-a11y', 'react-refresh', 'unused-imports', '@tanstack/query'],
   rules: {
     'no-console': 'error',
     'react-refresh/only-export-components': [
@@ -47,5 +48,8 @@ module.exports = {
     'jsx-a11y/alt-text': 'off',
     'import/order': 'off',
     'no-shadow': 'off',
+    '@tanstack/query/exhaustive-deps': 'error',
+    '@tanstack/query/no-rest-destructuring': 'warn',
+    '@tanstack/query/stable-query-client': 'error',
   },
 };
