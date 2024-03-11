@@ -4,7 +4,7 @@ import twDefaultTheme from 'tailwindcss/defaultTheme';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./src/**/*.{ts,tsx}'],
+  content: ['index.html', './src/**/*.{ts,tsx}'],
   theme: {
     container: {
       center: true,
