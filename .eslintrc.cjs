@@ -48,6 +48,8 @@ module.exports = {
     'jsx-a11y/alt-text': 'off',
     'import/order': 'off',
     'no-shadow': 'off',
+    'react/require-default-props': 'off',
+    'react/function-component-definition': 'off',
     '@tanstack/query/exhaustive-deps': 'error',
     '@tanstack/query/no-rest-destructuring': 'warn',
     '@tanstack/query/stable-query-client': 'error',
