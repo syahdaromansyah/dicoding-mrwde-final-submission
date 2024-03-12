@@ -12,6 +12,12 @@ const router = createRouter({
   defaultPreload: 'intent',
 });
 
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
+
 const queryClient = new QueryClient();
 
 // Render the app
