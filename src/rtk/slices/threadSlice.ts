@@ -160,14 +160,17 @@ export const threadSlice = createSlice({
       const { id, content, createdAt, owner, upVotesBy, downVotesBy } =
         action.payload;
 
-      state.thread.data.detailThread.comments.push({
-        id,
-        content,
-        createdAt,
-        owner,
-        upVotesBy,
-        downVotesBy,
-      });
+      state.thread.data.detailThread.comments = [
+        {
+          id,
+          content,
+          createdAt,
+          owner,
+          upVotesBy,
+          downVotesBy,
+        },
+        ...state.thread.data.detailThread.comments,
+      ];
     },
     setStatusFetch(state, action: PayloadAction<TSetStatusFetch>) {
       state.status = action.payload.status;
