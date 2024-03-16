@@ -1,44 +1,34 @@
-import {
-  TLeaderBoardData,
-  TThreadsResponse,
-  TUsersResponse,
-} from '@/types/types';
+import { TLeaderBoardData, TUsersData } from '@/types/types';
 
 export default function TableRowData({
   leaderBoard,
-  dataThreads,
   dataUsers,
 }: Readonly<{
   leaderBoard: TLeaderBoardData;
-  dataThreads: TThreadsResponse;
-  dataUsers: TUsersResponse;
+  dataUsers: TUsersData;
 }>) {
   return (
     <tr key={leaderBoard.user.id}>
-      <td className="">
+      <td>
         <p className="flex items-center gap-x-2 md:text-xl">
           <img
             className="block w-6 rounded-full"
             src={
-              dataThreads && dataUsers
-                ? dataUsers.data.users.find(
-                    (user) => user.id === leaderBoard.user.id,
-                  )?.avatar
+              dataUsers
+                ? dataUsers.find((user) => user.id === leaderBoard.user.id)
+                    ?.avatar
                 : ''
             }
             alt={`${
-              dataThreads && dataUsers
-                ? dataUsers.data.users.find(
-                    (user) => user.id === leaderBoard.user.id,
-                  )?.avatar
+              dataUsers
+                ? dataUsers.find((user) => user.id === leaderBoard.user.id)
+                    ?.avatar
                 : null
             } profile`}
           />
 
-          {dataThreads && dataUsers
-            ? dataUsers.data.users.find(
-                (user) => user.id === leaderBoard.user.id,
-              )?.name
+          {dataUsers
+            ? dataUsers.find((user) => user.id === leaderBoard.user.id)?.name
             : null}
         </p>
       </td>

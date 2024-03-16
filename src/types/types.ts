@@ -1,3 +1,37 @@
+export type TProfileResponse = {
+  status: string;
+  message: string;
+  data: {
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      avatar: string;
+    };
+  };
+};
+
+export type TRegisterResponse = {
+  status: string;
+  message: string;
+  data: {
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      avatar: string;
+    };
+  };
+};
+
+export type TLoginResponse = {
+  status: string;
+  message: string;
+  data: {
+    token: string;
+  };
+};
+
 export type TThreadsResponse = {
   data: {
     threads: {
@@ -16,7 +50,35 @@ export type TThreadsResponse = {
   status: string;
 };
 
+export type TThreadsDataResponse = {
+  threads: {
+    id: string;
+    title: string;
+    body: string;
+    category: string;
+    createdAt: string;
+    ownerId: string;
+    upVotesBy: string[];
+    downVotesBy: string[];
+    totalComments: number;
+  }[];
+  message: string;
+  status: string;
+};
+
 export type TThreadsData = {
+  id: string;
+  title: string;
+  body: string;
+  category: string;
+  createdAt: string;
+  ownerId: string;
+  upVotesBy: string[];
+  downVotesBy: string[];
+  totalComments: number;
+}[];
+
+export type TThreadsSingleData = {
   id: string;
   title: string;
   body: string;
@@ -42,11 +104,69 @@ export type TUsersResponse = {
 };
 
 export type TUsersData = {
-  users: {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+}[];
+
+export type TThreadResponse = {
+  status: string;
+  message: string;
+  data: {
+    detailThread: {
+      id: string;
+      title: string;
+      body: string;
+      category: string;
+      createdAt: string;
+      owner: {
+        id: string;
+        name: string;
+        avatar: string;
+      };
+      upVotesBy: string[];
+      downVotesBy: string[];
+      comments: {
+        id: string;
+        content: string;
+        createdAt: string;
+        owner: {
+          id: string;
+          name: string;
+          avatar: string;
+        };
+        upVotesBy: string[];
+        downVotesBy: string[];
+      }[];
+    };
+  };
+};
+
+export type TThreadData = {
+  id: string;
+  title: string;
+  body: string;
+  category: string;
+  createdAt: string;
+  owner: {
     id: string;
     name: string;
-    email: string;
     avatar: string;
+  };
+  upVotesBy: string[];
+  downVotesBy: string[];
+  comments: {
+    id: string;
+    content: string;
+    createdAt: string;
+    owner: {
+      id: string;
+      name: string;
+      avatar: string;
+    };
+    upVotesBy: string[];
+    downVotesBy: string[];
   }[];
 };
 
@@ -76,47 +196,7 @@ export type TLeaderBoardData = {
   score: number;
 };
 
-export type TLoginResponse = {
-  status: string;
-  message: string;
-  data: {
-    token: string;
-  };
-};
-
-export type TLoginErrorResponse = {
-  status: string;
-  message: string;
-  data: object;
-};
-
-export type TProfileResponse = {
-  status: string;
-  message: string;
-  data: {
-    user: {
-      id: string;
-      name: string;
-      email: string;
-      avatar: string;
-    };
-  };
-};
-
-export type TUpVoteThreadResponse = {
-  status: string;
-  message: string;
-  data: {
-    vote: {
-      id: string;
-      userId: string;
-      threadId: string;
-      voteType: number;
-    };
-  };
-};
-
-export type TDownVoteThreadResponse = {
+export type TVoteThreadResponse = {
   status: string;
   message: string;
   data: {
@@ -133,16 +213,17 @@ export type TCreateCommentResponse = {
   status: string;
   message: string;
   data: {
-    thread: {
+    comment: {
       id: string;
-      title: string;
-      body: string;
-      category: string;
+      content: string;
       createdAt: string;
-      ownerId: string;
       upVotesBy: string[];
       downVotesBy: string[];
-      totalComments: number;
+      owner: {
+        id: string;
+        name: string;
+        email: string;
+      };
     };
   };
 };
@@ -179,90 +260,6 @@ export type TCreateThreadResponse = {
   };
 };
 
-export type TCreateThreadErrorResponse = {
-  status: string;
-  message: string;
-  data: object;
-};
-
-export type TRegisterResponse = {
-  status: string;
-  message: string;
-  data: {
-    user: {
-      id: string;
-      name: string;
-      email: string;
-      avatar: string;
-    };
-  };
-};
-
-export type TRegisterErrorResponse = {
-  status: string;
-  message: string;
-  data: object;
-};
-
-export type TUpVoteCommentResponse = {
-  status: string;
-  message: string;
-  data: {
-    vote: {
-      id: string;
-      userId: string;
-      commentId: string;
-      voteType: number;
-    };
-  };
-};
-
-export type TNeutralizeVoteCommentResponse = {
-  status: string;
-  message: string;
-  data: {
-    vote: {
-      id: string;
-      userId: string;
-      commentId: string;
-      voteType: number;
-    };
-  };
-};
-
-export type TThreadResponse = {
-  status: string;
-  message: string;
-  data: {
-    detailThread: {
-      id: string;
-      title: string;
-      body: string;
-      category: string;
-      createdAt: string;
-      owner: {
-        id: string;
-        name: string;
-        avatar: string;
-      };
-      upVotesBy: string[];
-      downVotesBy: string[];
-      comments: {
-        id: string;
-        content: string;
-        createdAt: string;
-        owner: {
-          id: string;
-          name: string;
-          avatar: string;
-        };
-        upVotesBy: string[];
-        downVotesBy: string[];
-      }[];
-    };
-  };
-};
-
 export type TCommentData = {
   id: string;
   content: string;
@@ -274,4 +271,14 @@ export type TCommentData = {
   };
   upVotesBy: string[];
   downVotesBy: string[];
+};
+
+export type TErrorResponse = {
+  status: string;
+  message: string;
+  data: object;
+};
+
+export type TSetStatusFetch = {
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
 };

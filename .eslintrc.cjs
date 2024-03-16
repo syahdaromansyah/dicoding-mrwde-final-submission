@@ -50,6 +50,7 @@ module.exports = {
     'no-shadow': 'off',
     'react/require-default-props': 'off',
     'react/function-component-definition': 'off',
+    'default-case': 'off',
     '@tanstack/query/exhaustive-deps': 'error',
     '@tanstack/query/no-rest-destructuring': 'warn',
     '@tanstack/query/stable-query-client': 'error',

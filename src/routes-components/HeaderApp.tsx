@@ -1,9 +1,12 @@
+import { useToast } from '@/components/ui/use-toast';
 import useCloseNav from '@/hooks/routes-component/HeaderApp/useCloseNav';
-import useAuthSlice from '@/hooks/useAuthSlice';
+import useProfileSlice from '@/hooks/useProfileSlice';
+import { removeAccessToken } from '@/network-data/network-data';
 import { useAppDispatch } from '@/rtk/hooks';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useRef, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { useRef } from 'react';
 import { CiCreditCard2 } from 'react-icons/ci';
 import { GoPerson } from 'react-icons/go';
 import { HiBars2 } from 'react-icons/hi2';
@@ -45,17 +48,36 @@ export default function HeaderApp() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { auth, setAuth } = useAuthSlice();
+  const { toast } = useToast();
+
+  const { profile, setProfile } = useProfileSlice();
 
   const handleLogOut = () => {
+    removeAccessToken();
+
     dispatch(
-      setAuth({
-        id: '',
-        name: '',
-        email: '',
-        avatar: '',
+      setProfile({
+        profile: {
+          message: '',
+          status: '',
+          data: {
+            user: {
+              id: '',
+              name: '',
+              email: '',
+              avatar: '',
+            },
+          },
+        },
+        status: 'idle',
+        error: null,
       }),
     );
+
+    toast({
+      title: 'Log Out Account',
+      description: 'Log out account is success',
+    });
 
     navigate({ to: '/login' });
   };
@@ -71,12 +93,12 @@ export default function HeaderApp() {
 
   return (
     <header>
-      <div className="relative mb-4">
+      <div className="relative">
         <nav>
-          <div className="flex items-center justify-between rounded-xl bg-gray-200/60 px-4 py-3 shadow shadow-gray-100 backdrop-blur dark:bg-gray-800/60 dark:shadow-none">
+          <div className="flex items-center justify-between gap-x-2 rounded-xl bg-gray-200/60 px-4 py-3 shadow shadow-gray-100 backdrop-blur dark:bg-gray-800/60 dark:shadow-none">
             <div>
               <p className="font-space-grotesk text-2xl font-semibold">
-                <Link to="/">Forum App</Link>
+                <Link to="/">Forumy</Link>
               </p>
             </div>
 
@@ -105,15 +127,15 @@ export default function HeaderApp() {
             >
               <div className="rounded-md bg-gray-200/80 p-2 backdrop-blur dark:bg-gray-600/60">
                 <div className="grid gap-y-2">
-                  {auth.id ? (
+                  {profile.id ? (
                     <p className="font-poppins flex gap-x-2 rounded-md border-b px-8 py-3 dark:border-gray-600">
                       <span className="flex cursor-default items-center gap-x-2">
                         <img
                           className="w-8 rounded-full"
-                          src={auth.avatar}
-                          alt={`${auth.name} avatar`}
+                          src={profile.avatar}
+                          alt={`${profile.name} avatar`}
                         />
-                        <span>Hello! {auth.name}</span>
+                        <span>Hello! {profile.name}</span>
                       </span>
                     </p>
                   ) : (
@@ -131,7 +153,7 @@ export default function HeaderApp() {
                   )}
 
                   <div>
-                    {auth.id ? (
+                    {profile.id ? (
                       <NavLink to="/new" handleNavClose={handleCloseNav}>
                         <MdOutlineEditNote className="text-xl" />
                         Create Threads
@@ -148,7 +170,7 @@ export default function HeaderApp() {
                       Leaderboards
                     </NavLink>
 
-                    {auth.id ? (
+                    {profile.id ? (
                       <p>
                         <button
                           className="font-poppins flex w-full gap-x-2 rounded-md px-8 py-3 transition hover:bg-gray-300 dark:outline-none dark:hover:bg-gray-800"

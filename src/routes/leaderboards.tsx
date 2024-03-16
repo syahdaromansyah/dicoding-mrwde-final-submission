@@ -1,22 +1,28 @@
-import useLeaderboards from '@/hooks/react-query-network/useLeaderboards';
-import useThreads from '@/hooks/react-query-network/useThreads';
-import useUsers from '@/hooks/react-query-network/useUsers';
+import LoadingProgress from '@/components/LoadingProgress';
+import useLeaderBoardsSlice from '@/hooks/useLeaderBoardsSlice';
+import useUsersSlice from '@/hooks/useUsersSlice';
 import TableRowData from '@/routes-components/leaderboards/TabelRowData';
 import TableHead from '@/routes-components/leaderboards/TableHead';
+import TableRowSkeleton from '@/routes-components/leaderboards/TableRowSkeleton';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/leaderboards')({
-  component: Leaderboards,
+  component: LeaderBoards,
 });
 
-function Leaderboards() {
-  const { data: dataLeaderboards } = useLeaderboards();
-  const { data: dataThreads } = useThreads();
-  const { data: dataUsers } = useUsers();
+function LeaderBoards() {
+  const { leaderBoards, statusLeaderBoards } = useLeaderBoardsSlice();
+  const { users } = useUsersSlice();
 
   return (
     <div>
-      <h1 className="font-poppins mb-4 text-2xl font-bold">
+      <LoadingProgress
+        isLoading={statusLeaderBoards === 'loading'}
+        isSuccess={statusLeaderBoards === 'succeeded'}
+        isError={statusLeaderBoards === 'failed'}
+      />
+
+      <h1 className="mb-4 font-space-grotesk text-2xl font-bold">
         Users Active Standings
       </h1>
 
@@ -24,16 +30,28 @@ function Leaderboards() {
         <TableHead />
 
         <tbody>
-          {dataLeaderboards && dataThreads && dataUsers
-            ? dataLeaderboards.data.leaderboards.map((leaderBoard) => (
-                <TableRowData
-                  key={leaderBoard.user.id}
-                  leaderBoard={leaderBoard}
-                  dataThreads={dataThreads}
-                  dataUsers={dataUsers}
-                />
-              ))
-            : null}
+          {leaderBoards.length > 0 ? (
+            leaderBoards.map((leaderBoard) => (
+              <TableRowData
+                key={leaderBoard.user.id}
+                leaderBoard={leaderBoard}
+                dataUsers={users}
+              />
+            ))
+          ) : (
+            <>
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+              <TableRowSkeleton />
+            </>
+          )}
         </tbody>
       </table>
     </div>

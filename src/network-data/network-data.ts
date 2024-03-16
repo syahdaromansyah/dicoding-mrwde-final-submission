@@ -1,20 +1,15 @@
 import type {
   TCreateCommentResponse,
-  TCreateThreadErrorResponse,
   TCreateThreadResponse,
-  TDownVoteThreadResponse,
+  TErrorResponse,
   TLeaderBoardsResponse,
-  TLoginErrorResponse,
   TLoginResponse,
-  TNeutralizeVoteCommentResponse,
   TProfileResponse,
-  TRegisterErrorResponse,
   TRegisterResponse,
   TThreadResponse,
   TThreadsResponse,
-  TUpVoteCommentResponse,
-  TUpVoteThreadResponse,
   TUsersResponse,
+  TVoteThreadResponse,
 } from '@/types/types';
 import axios from 'axios';
 
@@ -30,26 +25,25 @@ const putAccessToken = (accessToken: string) => {
 
 const getAccessToken = () => sessionStorage.getItem('accessToken');
 
+const removeAccessToken = () => sessionStorage.removeItem('accessToken');
+
 const register = (name: string, email: string, password: string) => {
-  return axiosInstance.post<TRegisterResponse | TRegisterErrorResponse>(
-    '/register',
-    {
-      name,
-      email,
-      password,
-    },
-  );
+  return axiosInstance.post<TRegisterResponse | TErrorResponse>('/register', {
+    name,
+    email,
+    password,
+  });
 };
 
 const login = (email: string, password: string) => {
-  return axiosInstance.post<TLoginResponse | TLoginErrorResponse>('/login', {
+  return axiosInstance.post<TLoginResponse | TErrorResponse>('/login', {
     email,
     password,
   });
 };
 
 const getProfile = () => {
-  return axiosInstance.get<TProfileResponse>('/users/me', {
+  return axiosInstance.get<TProfileResponse | TErrorResponse>('/users/me', {
     headers: {
       Authorization: `Bearer ${getAccessToken()}`,
     },
@@ -57,11 +51,11 @@ const getProfile = () => {
 };
 
 const getUsers = () => {
-  return axiosInstance.get<TUsersResponse>('/users');
+  return axiosInstance.get<TUsersResponse | TErrorResponse>('/users');
 };
 
 const createThread = (title: string, body: string, category: string) => {
-  return axiosInstance.post<TCreateThreadResponse | TCreateThreadErrorResponse>(
+  return axiosInstance.post<TCreateThreadResponse | TErrorResponse>(
     '/threads',
     {
       title,
@@ -76,13 +70,14 @@ const createThread = (title: string, body: string, category: string) => {
   );
 };
 
-const getThreads = () => axiosInstance.get<TThreadsResponse>('/threads');
+const getThreads = () =>
+  axiosInstance.get<TThreadsResponse | TErrorResponse>('/threads');
 
 const getThread = (threadId: string) =>
-  axiosInstance.get<TThreadResponse>(`/threads/${threadId}`);
+  axiosInstance.get<TThreadResponse | TErrorResponse>(`/threads/${threadId}`);
 
 const createComment = (threadId: string, content: string) => {
-  return axiosInstance.post<TCreateCommentResponse>(
+  return axiosInstance.post<TCreateCommentResponse | TErrorResponse>(
     `/threads/${threadId}/comments`,
     {
       content,
@@ -96,7 +91,7 @@ const createComment = (threadId: string, content: string) => {
 };
 
 const upVoteThread = (threadId: string) => {
-  return axiosInstance.post<TUpVoteThreadResponse>(
+  return axiosInstance.post<TVoteThreadResponse | TErrorResponse>(
     `/threads/${threadId}/up-vote`,
     {},
     {
@@ -108,7 +103,7 @@ const upVoteThread = (threadId: string) => {
 };
 
 const downVoteThread = (threadId: string) => {
-  return axiosInstance.post<TDownVoteThreadResponse>(
+  return axiosInstance.post<TVoteThreadResponse | TErrorResponse>(
     `/threads/${threadId}/down-vote`,
     {},
     {
@@ -120,7 +115,7 @@ const downVoteThread = (threadId: string) => {
 };
 
 const neutralVoteThread = (threadId: string) => {
-  return axiosInstance.post<TNeutralizeVoteCommentResponse>(
+  return axiosInstance.post<TVoteThreadResponse | TErrorResponse>(
     `/threads/${threadId}/neutral-vote`,
     {},
     {
@@ -132,7 +127,7 @@ const neutralVoteThread = (threadId: string) => {
 };
 
 const upVoteComment = (threadId: string, commentId: string) => {
-  return axiosInstance.post<TUpVoteCommentResponse>(
+  return axiosInstance.post<TVoteThreadResponse | TErrorResponse>(
     `/threads/${threadId}/comments/${commentId}/up-vote`,
     {},
     {
@@ -144,7 +139,7 @@ const upVoteComment = (threadId: string, commentId: string) => {
 };
 
 const downVoteComment = (threadId: string, commentId: string) => {
-  return axiosInstance.post(
+  return axiosInstance.post<TVoteThreadResponse | TErrorResponse>(
     `/threads/${threadId}/comments/${commentId}/down-vote`,
     {},
     {
@@ -156,7 +151,7 @@ const downVoteComment = (threadId: string, commentId: string) => {
 };
 
 const neutralVoteComment = (threadId: string, commentId: string) => {
-  return axiosInstance.post(
+  return axiosInstance.post<TVoteThreadResponse | TErrorResponse>(
     `/threads/${threadId}/comments/${commentId}/neutral-vote`,
     {},
     {
@@ -168,7 +163,9 @@ const neutralVoteComment = (threadId: string, commentId: string) => {
 };
 
 const getLeaderboards = () => {
-  return axiosInstance.get<TLeaderBoardsResponse>('/leaderboards');
+  return axiosInstance.get<TLeaderBoardsResponse | TErrorResponse>(
+    '/leaderboards',
+  );
 };
 
 export {
@@ -188,6 +185,7 @@ export {
   neutralVoteThread,
   putAccessToken,
   register,
+  removeAccessToken,
   upVoteComment,
   upVoteThread,
 };

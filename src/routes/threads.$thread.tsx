@@ -1,10 +1,12 @@
+import LoadingProgress from '@/components/LoadingProgress';
 import MarkdownEditor from '@/components/MarkdownEditor';
 import { Button } from '@/components/ui/button';
-import useThread from '@/hooks/react-query-network/useThread';
-import useThreads from '@/hooks/react-query-network/useThreads';
-import useUsers from '@/hooks/react-query-network/useUsers';
+import { Skeleton } from '@/components/ui/skeleton';
 import useComment from '@/hooks/routes/thread/useComment';
 import useAlertSlice from '@/hooks/useAlertSlice';
+import useProfileSlice from '@/hooks/useProfileSlice';
+import useThreadSlice from '@/hooks/useThreadSlice';
+import useUsersSlice from '@/hooks/useUsersSlice';
 import {
   createComment,
   downVoteComment,
@@ -14,167 +16,274 @@ import {
   upVoteComment,
   upVoteThread,
 } from '@/network-data/network-data';
-import ThreadCategory from '@/routes-components/ThreadCategory';
+import ThreadsCategories from '@/routes-components/ThreadsCategories';
 import Avatar from '@/routes-components/thread/Avatar';
 import Comment from '@/routes-components/thread/Comment';
 import CreatedAtContent from '@/routes-components/thread/CreatedAtContent';
 import DownVoteButton from '@/routes-components/thread/DownVoteButton';
 import UpVoteButton from '@/routes-components/thread/UpVoteButton';
 import { useAppDispatch } from '@/rtk/hooks';
-import { useQueryClient } from '@tanstack/react-query';
+import type { TCreateCommentResponse, TErrorResponse } from '@/types/types';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import type { ContextStore } from '@uiw/react-md-editor';
-import type { ChangeEvent } from 'react';
+import { AxiosError } from 'axios';
+import { type ChangeEvent } from 'react';
 import { FaRegComment } from 'react-icons/fa';
 import isEmpty from 'validator/lib/isEmpty';
 import MarkdownContent from '../components/MarkdownContent';
-import useAuthSlice from '../hooks/useAuthSlice';
 
 export const Route = createFileRoute('/threads/$thread')({
   component: Thread,
 });
 
 function Thread() {
-  const queryClient = useQueryClient();
-
   const { thread: threadId } = Route.useParams();
-
-  const { comment, changeComment } = useComment();
 
   const dispatch = useAppDispatch();
 
-  const { data: dataThread } = useThread(threadId);
-  const { data: dataThreads } = useThreads();
-  const { data: dataUsers } = useUsers();
+  const { comment, changeComment } = useComment();
 
-  const { auth } = useAuthSlice();
+  const { profile } = useProfileSlice();
   const { setAlert } = useAlertSlice();
 
+  const {
+    thread,
+    statusThread,
+    setUpVoteThread,
+    setDownVoteThread,
+    setNeutralVoteThread,
+    setUpVoteComment,
+    setDownVoteComment,
+    setNeutralVoteComment,
+    setComment,
+  } = useThreadSlice(threadId);
+  const { users } = useUsersSlice();
+
   const handleUpVoteThread = async () => {
-    if (auth.id === '') {
-      dispatch(
-        setAlert({
-          isShown: true,
-          message: 'Please login before up voting the thread',
-        }),
-      );
-
-      return;
-    }
-    if (!dataThread) return;
-
-    const alreadyVoted = dataThread.data.detailThread.upVotesBy.find(
-      (upVoteBy) => upVoteBy === auth.id,
-    );
-
-    if (alreadyVoted) {
-      await neutralVoteThread(threadId);
-    } else {
-      await upVoteThread(threadId);
-    }
-
-    queryClient.invalidateQueries({
-      queryKey: ['thread', threadId],
-    });
-  };
-
-  const handleDownVoteThread = async () => {
-    if (auth.id === '') {
-      dispatch(
-        setAlert({
-          isShown: true,
-          message: 'Please login before down voting a thread',
-        }),
-      );
-
-      return;
-    }
-    if (!dataThread) return;
-
-    const alreadyVoted = dataThread.data.detailThread.downVotesBy.find(
-      (downVoteBy) => downVoteBy === auth.id,
-    );
-
-    if (alreadyVoted) {
-      await neutralVoteThread(threadId);
-    } else {
-      await downVoteThread(threadId);
-    }
-
-    queryClient.invalidateQueries({
-      queryKey: ['thread', threadId],
-    });
-  };
-
-  const handleUpVoteComment = (commentId: string) => {
-    return async () => {
-      if (auth.id === '') {
+    try {
+      if (profile.id === '') {
         dispatch(
           setAlert({
             isShown: true,
-            message: 'Please login before up voting a comment',
+            message: 'Please login before up voting the thread',
           }),
         );
 
         return;
       }
-      if (!dataThread) return;
 
-      const foundComment = dataThread.data.detailThread.comments.find(
-        (comment) => comment.id === commentId,
+      if (thread.id === '') return;
+
+      const alreadyVoted = thread.upVotesBy.find(
+        (upVoteBy) => upVoteBy === profile.id,
       );
 
-      if (foundComment) {
-        const isNeutralComment = foundComment.upVotesBy.find(
-          (upVoteBy) => upVoteBy === auth.id,
-        );
+      if (alreadyVoted) {
+        await neutralVoteThread(threadId);
 
-        if (isNeutralComment) {
-          await neutralVoteComment(threadId, commentId);
-        } else {
-          await upVoteComment(threadId, commentId);
+        dispatch(
+          setNeutralVoteThread({
+            profileId: profile.id,
+          }),
+        );
+      } else {
+        await upVoteThread(threadId);
+
+        dispatch(
+          setUpVoteThread({
+            profileId: profile.id,
+          }),
+        );
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          const { message } = error.response.data as TErrorResponse;
+
+          dispatch(
+            setAlert({
+              isShown: true,
+              message: `Error: ${message}`,
+            }),
+          );
         }
       }
+    }
+  };
 
-      queryClient.invalidateQueries({
-        queryKey: ['thread', threadId],
-      });
+  const handleDownVoteThread = async () => {
+    try {
+      if (profile.id === '') {
+        dispatch(
+          setAlert({
+            isShown: true,
+            message: 'Please login before down voting the thread',
+          }),
+        );
+
+        return;
+      }
+
+      if (thread.id === '') return;
+
+      const alreadyVoted = thread.downVotesBy.find(
+        (downVoteBy) => downVoteBy === profile.id,
+      );
+
+      if (alreadyVoted) {
+        await neutralVoteThread(threadId);
+
+        dispatch(
+          setNeutralVoteThread({
+            profileId: profile.id,
+          }),
+        );
+      } else {
+        await downVoteThread(threadId);
+
+        dispatch(
+          setDownVoteThread({
+            profileId: profile.id,
+          }),
+        );
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          const { message } = error.response.data as TErrorResponse;
+
+          dispatch(
+            setAlert({
+              isShown: true,
+              message: `Error: ${message}`,
+            }),
+          );
+        }
+      }
+    }
+  };
+
+  const handleUpVoteComment = (commentId: string) => {
+    return async () => {
+      try {
+        if (profile.id === '') {
+          dispatch(
+            setAlert({
+              isShown: true,
+              message: 'Please login before up voting a comment',
+            }),
+          );
+
+          return;
+        }
+
+        if (thread.id === '') return;
+
+        const foundComment = thread.comments.find(
+          (comment) => comment.id === commentId,
+        );
+
+        if (foundComment) {
+          const isNeutralComment = foundComment.upVotesBy.find(
+            (upVoteBy) => upVoteBy === profile.id,
+          );
+
+          if (isNeutralComment) {
+            await neutralVoteComment(threadId, commentId);
+
+            dispatch(
+              setNeutralVoteComment({
+                profileId: profile.id,
+                commentId: foundComment.id,
+              }),
+            );
+          } else {
+            await upVoteComment(threadId, commentId);
+
+            dispatch(
+              setUpVoteComment({
+                profileId: profile.id,
+                commentId: foundComment.id,
+              }),
+            );
+          }
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            const { message } = error.response.data as TErrorResponse;
+
+            dispatch(
+              setAlert({
+                isShown: true,
+                message: `Error: ${message}`,
+              }),
+            );
+          }
+        }
+      }
     };
   };
 
   const handleDownVoteComment = (commentId: string) => {
     return async () => {
-      if (auth.id === '') {
-        dispatch(
-          setAlert({
-            isShown: true,
-            message: 'Please login before down voting a comment',
-          }),
+      try {
+        if (profile.id === '') {
+          dispatch(
+            setAlert({
+              isShown: true,
+              message: 'Please login before down voting a comment',
+            }),
+          );
+
+          return;
+        }
+
+        if (thread.id === '') return;
+
+        const foundComment = thread.comments.find(
+          (comment) => comment.id === commentId,
         );
 
-        return;
-      }
-      if (!dataThread) return;
+        if (foundComment) {
+          const isNeutralComment = foundComment.downVotesBy.find(
+            (upVoteBy) => upVoteBy === profile.id,
+          );
 
-      const foundComment = dataThread.data.detailThread.comments.find(
-        (comment) => comment.id === commentId,
-      );
+          if (isNeutralComment) {
+            await neutralVoteComment(threadId, commentId);
 
-      if (foundComment) {
-        const isNeutralComment = foundComment.downVotesBy.find(
-          (upVoteBy) => upVoteBy === auth.id,
-        );
+            dispatch(
+              setNeutralVoteComment({
+                profileId: profile.id,
+                commentId: foundComment.id,
+              }),
+            );
+          } else {
+            await downVoteComment(threadId, commentId);
 
-        if (isNeutralComment) {
-          await neutralVoteComment(threadId, commentId);
-        } else {
-          await downVoteComment(dataThread.data.detailThread.id, commentId);
+            dispatch(
+              setDownVoteComment({
+                profileId: profile.id,
+                commentId: foundComment.id,
+              }),
+            );
+          }
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            const { message } = error.response.data as TErrorResponse;
+
+            dispatch(
+              setAlert({
+                isShown: true,
+                message: `Error: ${message}`,
+              }),
+            );
+          }
         }
       }
-
-      queryClient.invalidateQueries({
-        queryKey: ['thread', threadId],
-      });
     };
   };
 
@@ -190,59 +299,93 @@ function Thread() {
 
   const handleSendComment = (threadId: string) => {
     return async () => {
-      const commentIsNotValid = isEmpty(comment);
+      try {
+        const commentIsNotValid = isEmpty(comment);
 
-      if (commentIsNotValid) {
+        if (commentIsNotValid) {
+          dispatch(
+            setAlert({
+              isShown: true,
+              message: 'Error: Comment input is empty',
+            }),
+          );
+
+          return;
+        }
+
+        const responseCreateComment = await createComment(threadId, comment);
+
+        const { id, content, createdAt, owner, upVotesBy, downVotesBy } = (
+          responseCreateComment.data as TCreateCommentResponse
+        ).data.comment;
+
         dispatch(
-          setAlert({
-            isShown: true,
-            message: 'Comment input is empty',
+          setComment({
+            id,
+            content,
+            createdAt,
+            owner: {
+              id: owner.id,
+              name: owner.name,
+              avatar: profile.avatar,
+            },
+            upVotesBy,
+            downVotesBy,
           }),
         );
 
-        return;
+        changeComment('');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            const { message } = error.response.data as TErrorResponse;
+
+            dispatch(
+              setAlert({
+                isShown: true,
+                message: `Error: ${message}`,
+              }),
+            );
+          }
+        }
       }
-
-      await createComment(threadId, comment);
-
-      changeComment('');
-
-      queryClient.invalidateQueries({
-        queryKey: ['thread', threadId],
-      });
     };
   };
 
   return (
     <div>
-      {dataThread ? (
+      <LoadingProgress
+        isLoading={statusThread === 'loading'}
+        isSuccess={statusThread === 'succeeded'}
+        isError={statusThread === 'failed'}
+      />
+
+      {statusThread === 'succeeded' && thread.id !== '' ? (
         <article>
           <div className="mb-4">
-            <ThreadCategory>
-              {dataThread.data.detailThread.category}
-            </ThreadCategory>
+            <ThreadsCategories>
+              {thread.category.split(' ').join('')}
+            </ThreadsCategories>
           </div>
 
           <h2 className="mb-4 font-space-grotesk text-3xl font-bold md:text-4xl">
-            <span className="inline-block rounded-md px-2 py-1 dark:bg-gray-800">
-              {dataThread.data.detailThread.title}
+            <span className="inline-block rounded-md px-3 py-2 dark:bg-gray-800">
+              {thread.title}
             </span>
           </h2>
 
           <div className="mb-4 break-all">
-            <MarkdownContent>
-              {dataThread.data.detailThread.body}
-            </MarkdownContent>
+            <MarkdownContent>{thread.body}</MarkdownContent>
           </div>
 
           <div className="lg: mb-4 flex flex-wrap items-center gap-4 border-b-2 border-gray-200 pb-4 dark:border-gray-800">
             <UpVoteButton
-              dataThread={dataThread}
+              dataThread={thread}
               handleUpVoteThread={handleUpVoteThread}
             />
 
             <DownVoteButton
-              dataThread={dataThread}
+              dataThread={thread}
               handleDownVoteThread={handleDownVoteThread}
             />
 
@@ -252,27 +395,21 @@ function Thread() {
                   <FaRegComment />
                 </span>
               </span>
-              {dataThread.data.detailThread.comments.length}
+              {thread.comments.length}
             </p>
 
-            <CreatedAtContent dataThread={dataThread} />
+            <CreatedAtContent createdAt={thread.createdAt} />
 
             <p>Created by</p>
 
-            {dataThreads && dataUsers && (
-              <Avatar
-                dataThread={dataThread}
-                dataThreads={dataThreads}
-                dataUsers={dataUsers}
-              />
-            )}
+            {users && <Avatar dataThread={thread} dataUsers={users} />}
           </div>
 
           <h3 className="mb-4 font-space-grotesk text-xl font-bold md:text-4xl">
             Give a Comment
           </h3>
 
-          {auth.id ? (
+          {profile.id ? (
             <div className="mb-4 grid gap-y-4">
               <div className="h-64">
                 <MarkdownEditor value={comment} handleValue={handleComment} />
@@ -283,7 +420,7 @@ function Thread() {
                   <Button
                     className="inline-block w-full"
                     type="button"
-                    onClick={handleSendComment(dataThread.data.detailThread.id)}
+                    onClick={handleSendComment(thread.id)}
                   >
                     Send Comment
                   </Button>
@@ -293,7 +430,7 @@ function Thread() {
           ) : null}
 
           <div className="mb-4">
-            {auth.id ? null : (
+            {profile.id ? null : (
               <p>
                 <Link
                   className="underline hover:text-gray-500 dark:hover:text-gray-300"
@@ -307,16 +444,16 @@ function Thread() {
           </div>
 
           <h3 className="mb-4 font-space-grotesk text-xl font-bold md:text-3xl">
-            Commentary ({dataThread.data.detailThread.comments.length})
+            Commentary ({thread.comments.length})
           </h3>
 
-          {dataThread.data.detailThread.comments.length > 0 && dataUsers && (
+          {thread.comments.length > 0 && users.length > 0 && (
             <section className="grid gap-y-4">
-              {dataThread.data.detailThread.comments.map((comment) => (
+              {thread.comments.map((comment) => (
                 <Comment
                   key={comment.id}
                   comment={comment}
-                  dataUsers={dataUsers}
+                  dataUsers={users}
                   handleUpVoteComment={handleUpVoteComment}
                   handleDownVoteComment={handleDownVoteComment}
                 />
@@ -324,12 +461,69 @@ function Thread() {
             </section>
           )}
 
-          {dataThread.data.detailThread.comments.length === 0 && (
-            <p>There is no commentary yet.</p>
-          )}
+          {thread.comments.length === 0 && <p>There is no commentary yet.</p>}
         </article>
       ) : (
-        'Loading...'
+        <div>
+          <div className="mb-4">
+            <Skeleton className="h-8 w-[25%]" />
+          </div>
+
+          <div className="mb-4">
+            <Skeleton className="h-12 w-[50%]" />
+          </div>
+
+          <div className="mb-4 grid gap-y-2">
+            <Skeleton className="h-7 w-[98%]" />
+            <Skeleton className="h-7 w-[98%]" />
+            <Skeleton className="h-7 w-[94%]" />
+          </div>
+
+          <div className="mb-4 flex flex-wrap gap-4 border-b-2 border-gray-200 pb-4 dark:border-gray-800">
+            <Skeleton className="h-8 w-12" />
+            <Skeleton className="h-8 w-12" />
+            <Skeleton className="h-8 w-28" />
+            <Skeleton className="h-8 w-24" />
+            <Skeleton className="h-8 w-24" />
+          </div>
+
+          {profile.id === '' ? (
+            <div className="mb-4">
+              <Skeleton className="h-10 w-[45%]" />
+            </div>
+          ) : null}
+
+          {profile.id ? (
+            <div className="mb-4 grid gap-y-4">
+              <Skeleton className="h-64 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          ) : null}
+
+          <div className="mb-4">
+            <Skeleton className="h-8 w-[25%]" />
+          </div>
+
+          <div className="rounded-md p-4 dark:bg-gray-950">
+            <div className="flex justify-between">
+              <div className="mb-4 flex gap-x-2">
+                <Skeleton className="h-6 w-6 rounded-full" />
+                <Skeleton className="h-7 w-28" />
+              </div>
+
+              <Skeleton className="h-7 w-28" />
+            </div>
+
+            <div className="mb-4">
+              <Skeleton className="h-7 w-[65%]" />
+            </div>
+
+            <div className="flex flex-wrap gap-4">
+              <Skeleton className="h-8 w-12" />
+              <Skeleton className="h-8 w-12" />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

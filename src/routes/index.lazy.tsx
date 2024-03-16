@@ -1,21 +1,29 @@
-import useThreads from '@/hooks/react-query-network/useThreads';
-import useUsers from '@/hooks/react-query-network/useUsers';
+import LoadingProgress from '@/components/LoadingProgress';
+import { Input } from '@/components/ui/input';
 import useAlertSlice from '@/hooks/useAlertSlice';
-import useAuthSlice from '@/hooks/useAuthSlice';
+import useFilterThreadsSlice from '@/hooks/useFilterThreadsSlice';
+import useProfileSlice from '@/hooks/useProfileSlice';
+import useThreadsSlice from '@/hooks/useThreadsSlice';
+import useUsersSlice from '@/hooks/useUsersSlice';
 import {
   downVoteThread,
   neutralVoteThread,
   upVoteThread,
 } from '@/network-data/network-data';
-import ThreadCategory from '@/routes-components/ThreadCategory';
+import ThreadsCategories from '@/routes-components/ThreadsCategories';
+import CategorySkeleton from '@/routes-components/threads/CategorySkeleton';
 import DownVoteButton from '@/routes-components/threads/DownVoteButton';
+import ThreadSkeleton from '@/routes-components/threads/ThreadSkeleton';
 import UpVoteButton from '@/routes-components/threads/UpVoteButton';
 import { useAppDispatch } from '@/rtk/hooks';
-import { useQueryClient } from '@tanstack/react-query';
+import type { TErrorResponse } from '@/types/types';
 import { Link, createLazyFileRoute } from '@tanstack/react-router';
+import { AxiosError } from 'axios';
 import { formatDistance } from 'date-fns';
 import { motion } from 'framer-motion';
+import { type ChangeEventHandler } from 'react';
 import { FaRegComment } from 'react-icons/fa';
+import notFoundSvg from '../assets/not-found-illustration.svg';
 import MarkdownContent from '../components/MarkdownContent';
 
 export const Route = createLazyFileRoute('/')({
@@ -35,112 +43,187 @@ const container = {
 };
 
 function Index() {
-  const queryClient = useQueryClient();
-
   const dispatch = useAppDispatch();
 
+  const { profile } = useProfileSlice();
   const { setAlert } = useAlertSlice();
+  const { filterThreads, setFilterThreads } = useFilterThreadsSlice();
 
-  const { data: dataUsers } = useUsers();
-  const { data: dataThreads } = useThreads();
+  const {
+    threads,
+    statusThreads,
+    setUpVoteThread,
+    setDownVoteThread,
+    setNeutralVoteThread,
+  } = useThreadsSlice();
 
-  const unDuplicateCategory = new Set(
-    dataThreads?.data.threads.map((thread) => thread.category),
+  const { users, statusUsers } = useUsersSlice();
+
+  const filteredThreads = threads.filter((thread) =>
+    thread.title
+      .toLowerCase()
+      .split(' ')
+      .join('')
+      .startsWith(filterThreads.toLowerCase().split(' ').join('')),
   );
 
-  const { auth } = useAuthSlice();
+  const unDuplicateCategory = new Set(
+    threads?.map((thread) => thread.category),
+  );
+
+  const handleFilterThreads: ChangeEventHandler<HTMLInputElement> = (ev) =>
+    dispatch(
+      setFilterThreads({
+        filterThreads: ev.target.value,
+      }),
+    );
 
   const handleUpVoteThread = (threadId: string) => {
     return async () => {
-      if (auth.id === '') {
-        dispatch(
-          setAlert({
-            isShown: true,
-            message: 'Please login before up voting a thread',
-          }),
-        );
+      try {
+        if (profile.id === '') {
+          dispatch(
+            setAlert({
+              isShown: true,
+              message: 'Please login before up voting a thread',
+            }),
+          );
 
-        return;
-      }
-      if (!dataThreads) return;
+          return;
+        }
 
-      const foundThread = dataThreads.data.threads.find(
-        (thread) => thread.id === threadId,
-      );
+        if (threads.length === 0) return;
 
-      if (foundThread) {
-        const isNeutralVoted = foundThread.upVotesBy.find(
-          (upVoteBy) => upVoteBy === auth.id,
-        );
+        const foundThread = threads.find((thread) => thread.id === threadId);
 
-        if (isNeutralVoted) {
-          await neutralVoteThread(threadId);
-        } else {
-          await upVoteThread(threadId);
+        if (foundThread) {
+          const isNeutralVoted = foundThread.upVotesBy.find(
+            (upVoteBy) => upVoteBy === profile.id,
+          );
+
+          if (isNeutralVoted) {
+            await neutralVoteThread(threadId);
+
+            dispatch(
+              setNeutralVoteThread({
+                threadId,
+                profileId: profile.id,
+              }),
+            );
+          } else {
+            await upVoteThread(threadId);
+
+            dispatch(
+              setUpVoteThread({
+                threadId,
+                profileId: profile.id,
+              }),
+            );
+          }
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            const { message } = error.response.data as TErrorResponse;
+
+            dispatch(
+              setAlert({
+                isShown: true,
+                message: `Error: ${message}`,
+              }),
+            );
+          }
         }
       }
-
-      queryClient.invalidateQueries({
-        queryKey: ['threads'],
-      });
     };
   };
 
   const handleDownVoteThread = (threadId: string) => {
     return async () => {
-      if (auth.id === '') {
-        dispatch(
-          setAlert({
-            isShown: true,
-            message: 'Please login before down voting a thread',
-          }),
-        );
+      try {
+        if (profile.id === '') {
+          dispatch(
+            setAlert({
+              isShown: true,
+              message: 'Please login before down voting a thread',
+            }),
+          );
 
-        return;
-      }
+          return;
+        }
 
-      if (!dataThreads) return;
+        if (threads.length === 0) return;
 
-      const foundThread = dataThreads.data.threads.find(
-        (thread) => thread.id === threadId,
-      );
+        const foundThread = threads.find((thread) => thread.id === threadId);
 
-      if (foundThread) {
-        const isNeutralVoted = foundThread.downVotesBy.find(
-          (downVoteBy) => downVoteBy === auth.id,
-        );
+        if (foundThread) {
+          const isNeutralVoted = foundThread.downVotesBy.find(
+            (downVoteBy) => downVoteBy === profile.id,
+          );
 
-        if (isNeutralVoted) {
-          await neutralVoteThread(threadId);
-        } else {
-          await downVoteThread(threadId);
+          if (isNeutralVoted) {
+            await neutralVoteThread(threadId);
+
+            dispatch(
+              setNeutralVoteThread({
+                threadId,
+                profileId: profile.id,
+              }),
+            );
+          } else {
+            await downVoteThread(threadId);
+
+            dispatch(
+              setDownVoteThread({
+                threadId,
+                profileId: profile.id,
+              }),
+            );
+          }
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response) {
+            const { message } = error.response.data as TErrorResponse;
+
+            dispatch(
+              setAlert({
+                isShown: true,
+                message: `Error: ${message}`,
+              }),
+            );
+          }
         }
       }
-
-      queryClient.invalidateQueries({
-        queryKey: ['threads'],
-      });
     };
   };
 
   return (
     <>
+      <LoadingProgress
+        isLoading={statusThreads === 'loading'}
+        isSuccess={statusThreads === 'succeeded'}
+        isError={statusThreads === 'failed'}
+      />
+
       <div>
         <h2 className="mb-4 font-space-grotesk text-xl font-bold md:text-2xl">
           Kategori popular
         </h2>
 
         <div className="mb-4 flex flex-wrap gap-2 border-b-2 border-gray-200 pb-4 dark:border-gray-800">
-          {dataThreads
-            ? [...unDuplicateCategory].map((category) => (
-                <p
-                  key={category}
-                  className="inline-block rounded-md border border-gray-300 px-2 py-1 dark:border-gray-600"
-                >
-                  #{category.split(' ').join('')}
-                </p>
-              ))
-            : null}
+          {statusThreads === 'succeeded' ? (
+            [...unDuplicateCategory].map((category) => (
+              <p
+                key={category}
+                className="inline-block rounded-md border border-gray-300 px-2 py-1 dark:border-gray-600"
+              >
+                #{category.split(' ').join('')}
+              </p>
+            ))
+          ) : (
+            <CategorySkeleton />
+          )}
         </div>
       </div>
 
@@ -149,94 +232,165 @@ function Index() {
           Diskusi tersedia
         </h2>
 
+        <div className="mb-4">
+          <p>
+            <Input
+              className="inline-block md:min-w-96"
+              type="text"
+              placeholder="Filter Threads"
+              value={filterThreads}
+              onChange={handleFilterThreads}
+            />
+          </p>
+        </div>
+
         <motion.div
           variants={container}
           initial="hidden"
           animate="show"
           className="grid grid-cols-1 gap-3 gap-y-4 md:grid-cols-[repeat(auto-fill,minmax(540px,1fr))]"
         >
-          {dataThreads
-            ? dataThreads.data.threads.map((thread) => (
-                <motion.article
-                  initial={{ opacity: 0, scale: 0, rotate: 15 }}
-                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-                  viewport={{ once: false }}
-                  // variants={item}
-                  className="rounded-md border border-gray-300 p-2 dark:border-gray-600"
-                  key={thread.id}
-                >
-                  <div className="mb-2">
-                    <ThreadCategory>
-                      {thread.category.split(' ').join('')}
-                    </ThreadCategory>
-                  </div>
-
-                  <h2 className="mb-2">
-                    <Link
-                      className="font-space-grotesk text-xl font-bold underline md:text-3xl"
-                      to="/threads/$thread"
-                      params={{
-                        thread: thread.id,
-                      }}
-                    >
-                      {thread.title}
-                    </Link>
-                  </h2>
-
-                  <div className="mb-2 text-ellipsis text-wrap break-all">
-                    <MarkdownContent>
-                      {`${thread.body.trim().split(' ').slice(0, 33).join(' ')}...`}
-                    </MarkdownContent>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 ">
-                    <UpVoteButton
-                      thread={thread}
-                      handleUpVoteThread={handleUpVoteThread}
-                    />
-
-                    <DownVoteButton
-                      thread={thread}
-                      handleDownVoteThread={handleDownVoteThread}
-                    />
-
-                    <div>
-                      <p className="flex items-center justify-center gap-x-1">
-                        <span>
-                          <span className="inline-block text-xl">
-                            <FaRegComment />
-                          </span>
-                        </span>
-                        {thread.totalComments}
-                      </p>
+          {statusThreads === 'succeeded' ||
+          statusUsers === 'succeeded' ||
+          filteredThreads.length !== 0 ? (
+            <>
+              {filteredThreads.length > 0 &&
+                filteredThreads.map((thread) => (
+                  <motion.article
+                    initial={{ opacity: 0, scale: 0, rotate: 15 }}
+                    whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                    viewport={{ once: false }}
+                    className="rounded-md border border-gray-300 p-2 dark:border-gray-600"
+                    key={thread.id}
+                  >
+                    <div className="mb-2">
+                      <ThreadsCategories>
+                        {thread.category.split(' ').join('')}
+                      </ThreadsCategories>
                     </div>
 
-                    <div className="flex-1">
-                      <time
-                        dateTime={formatDistance(thread.createdAt, new Date(), {
-                          addSuffix: true,
-                        })}
+                    <h2 className="mb-2">
+                      <Link
+                        className="font-space-grotesk text-xl font-bold underline md:text-3xl"
+                        to="/threads/$thread"
+                        params={{
+                          thread: thread.id,
+                        }}
                       >
-                        {formatDistance(thread.createdAt, new Date(), {
-                          addSuffix: true,
-                        })}
-                      </time>
+                        {thread.title}
+                      </Link>
+                    </h2>
+
+                    <div className="mb-2 text-ellipsis text-wrap break-all">
+                      <MarkdownContent>
+                        {`${thread.body.trim().split(' ').slice(0, 33).join(' ')}...`}
+                      </MarkdownContent>
                     </div>
 
-                    <div className="flex-1">
-                      <p>
-                        Created by{' '}
-                        {dataThreads && dataUsers
-                          ? dataUsers.data.users.find(
-                              (user) => user.id === thread.ownerId,
-                            )?.name
-                          : null}
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 ">
+                      <UpVoteButton
+                        thread={thread}
+                        handleUpVoteThread={handleUpVoteThread}
+                      />
+
+                      <DownVoteButton
+                        thread={thread}
+                        handleDownVoteThread={handleDownVoteThread}
+                      />
+                      <div>
+                        <p className="flex items-center justify-center gap-x-1">
+                          <span>
+                            <span className="inline-block text-xl">
+                              <FaRegComment />
+                            </span>
+                          </span>
+                          {thread.totalComments}
+                        </p>
+                      </div>
+                      <div className="flex-1">
+                        <time
+                          dateTime={formatDistance(
+                            thread.createdAt,
+                            new Date(),
+                            {
+                              addSuffix: true,
+                            },
+                          )}
+                        >
+                          {formatDistance(thread.createdAt, new Date(), {
+                            addSuffix: true,
+                          })}
+                        </time>
+                      </div>
+                      <div className="flex-1">
+                        <p>
+                          Created by{' '}
+                          {statusUsers === 'succeeded' && users.length !== 0
+                            ? users.find((user) => user.id === thread.ownerId)
+                                ?.name
+                            : null}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.article>
+                ))}
+
+              {statusThreads === 'succeeded' &&
+                filteredThreads.length === 0 && (
+                  <div className="h-full pt-4">
+                    <div className="grid gap-y-3">
+                      <img
+                        className="mx-auto block h-[178px] w-[256px] md:h-[228px] md:w-[326px]"
+                        src={notFoundSvg}
+                        alt="Threads is empty"
+                      />
+
+                      <p className="text-center">
+                        Thread with name{' '}
+                        <span className="inline-block rounded-md px-2 py-1 dark:bg-gray-700">
+                          {filterThreads}
+                        </span>{' '}
+                        is not found
                       </p>
                     </div>
                   </div>
-                </motion.article>
-              ))
-            : null}
+                )}
+            </>
+          ) : (
+            <>
+              <motion.article
+                initial={{ opacity: 0, scale: 0, rotate: 15 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                viewport={{ once: false }}
+              >
+                <ThreadSkeleton />
+              </motion.article>
+
+              <motion.article
+                initial={{ opacity: 0, scale: 0, rotate: 15 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                viewport={{ once: false }}
+              >
+                <ThreadSkeleton />
+              </motion.article>
+
+              <motion.article
+                initial={{ opacity: 0, scale: 0, rotate: 15 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                viewport={{ once: false }}
+              >
+                <ThreadSkeleton />
+              </motion.article>
+
+              <motion.article
+                initial={{ opacity: 0, scale: 0, rotate: 15 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                viewport={{ once: false }}
+              >
+                <ThreadSkeleton />
+              </motion.article>
+            </>
+          )}
         </motion.div>
       </div>
     </>

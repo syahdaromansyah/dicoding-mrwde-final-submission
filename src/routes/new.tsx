@@ -1,14 +1,12 @@
 import MarkdownEditor from '@/components/MarkdownEditor';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import useFormThread from '@/hooks/routes/new/useFormNewThread';
 import useAlertSlice from '@/hooks/useAlertSlice';
 import { createThread } from '@/network-data/network-data';
 import { useAppDispatch } from '@/rtk/hooks';
-import type {
-  TCreateThreadErrorResponse,
-  TCreateThreadResponse,
-} from '@/types/types';
+import type { TCreateThreadResponse, TErrorResponse } from '@/types/types';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import type { ContextStore } from '@uiw/react-md-editor';
 import { AxiosError } from 'axios';
@@ -25,8 +23,9 @@ function NewThread() {
     useFormThread();
 
   const navigate = useNavigate({ from: '/new' });
-
   const dispatch = useAppDispatch();
+
+  const { toast } = useToast();
 
   const { setAlert } = useAlertSlice();
 
@@ -69,20 +68,29 @@ function NewThread() {
         return;
       }
 
-      const response = await createThread(title, body, category);
+      const responseCreateThread = await createThread(title, body, category);
 
-      const data = (response.data as TCreateThreadResponse).data.thread;
+      const { thread } = (responseCreateThread.data as TCreateThreadResponse)
+        .data;
 
-      if (data.id)
-        navigate({ to: `/threads/$thread`, params: { thread: data.id } });
+      toast({
+        title: 'Creating Thread',
+        description: `Thread with title "${thread.title}" is successfully created`,
+      });
+
+      navigate({
+        to: `/threads/$thread`,
+        params: { thread: thread.id },
+      });
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response) {
+          const { message } = error.response.data as TErrorResponse;
+
           dispatch(
             setAlert({
               isShown: true,
-              message: (error.response.data as TCreateThreadErrorResponse)
-                .message,
+              message: `Error: ${message}`,
             }),
           );
         }

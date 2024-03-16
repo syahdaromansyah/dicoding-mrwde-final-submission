@@ -1,11 +1,21 @@
 import { configureStore } from '@reduxjs/toolkit';
 import alertReducer from './slices/alertSlice.ts';
-import authReducer from './slices/authSlice.ts';
+import filterThreadsReducer from './slices/filterThreadsSlice.ts';
+import leaderBoardsReducer from './slices/leaderBoardsSlice.ts';
+import profileReducer from './slices/profileSlice.ts';
+import threadReducer from './slices/threadSlice.ts';
+import threadsReducer from './slices/threadsSlice.ts';
+import usersReducer from './slices/usersSlice.ts';
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer,
     alert: alertReducer,
+    filterThreads: filterThreadsReducer,
+    profile: profileReducer,
+    threads: threadsReducer,
+    thread: threadReducer,
+    users: usersReducer,
+    leaderBoards: leaderBoardsReducer,
   },
 });
 

@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import useFormRegister from '@/hooks/routes/register/useFormRegister';
 import useAlertSlice from '@/hooks/useAlertSlice';
 import { register } from '@/network-data/network-data';
 import { useAppDispatch } from '@/rtk/hooks';
-import type { TRegisterErrorResponse, TRegisterResponse } from '@/types/types';
+import type { TErrorResponse, TRegisterResponse } from '@/types/types';
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { AxiosError } from 'axios';
 import type { ChangeEventHandler, FormEventHandler } from 'react';
@@ -25,6 +26,8 @@ function Register() {
   });
 
   const dispatch = useAppDispatch();
+
+  const { toast } = useToast();
 
   const { setAlert } = useAlertSlice();
 
@@ -61,6 +64,11 @@ function Register() {
 
       const response = await register(name, email, password);
 
+      toast({
+        title: 'Register Account',
+        description: 'New account is successfully registered',
+      });
+
       const data = (response.data as TRegisterResponse).data.user;
 
       if (data.id) navigate({ to: '/login' });
@@ -70,7 +78,7 @@ function Register() {
           dispatch(
             setAlert({
               isShown: true,
-              message: (error.response.data as TRegisterErrorResponse).message,
+              message: (error.response.data as TErrorResponse).message,
             }),
           );
         }

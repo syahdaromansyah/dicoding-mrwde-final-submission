@@ -1,23 +1,18 @@
-import type { TThreadResponse } from '@/types/types';
 import { formatDistance } from 'date-fns';
 
 export default function CreatedAtContent({
-  dataThread,
+  createdAt,
 }: Readonly<{
-  dataThread: TThreadResponse;
+  createdAt: string;
 }>) {
   return (
     <p>
       <time
-        dateTime={formatDistance(
-          dataThread.data.detailThread.createdAt,
-          new Date(),
-          {
-            addSuffix: true,
-          },
-        )}
+        dateTime={formatDistance(createdAt, new Date(), {
+          addSuffix: true,
+        })}
       >
-        {formatDistance(dataThread.data.detailThread.createdAt, new Date(), {
+        {formatDistance(createdAt, new Date(), {
           addSuffix: true,
         })}
       </time>

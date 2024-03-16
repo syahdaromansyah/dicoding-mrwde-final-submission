@@ -1,9 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import useAlertSlice from '@/hooks/useAlertSlice.ts';
-import useAuthSlice from '@/hooks/useAuthSlice';
-import { getProfile, login, putAccessToken } from '@/network-data/network-data';
+import { putAccessToken } from '@/network-data/network-data';
+import { login } from '@/network-data/network-data.ts';
 import { useAppDispatch } from '@/rtk/hooks.ts';
+import type { TErrorResponse, TLoginResponse } from '@/types/types.ts';
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { AxiosError } from 'axios';
 import type { ChangeEventHandler, FormEventHandler } from 'react';
@@ -11,13 +13,20 @@ import isEmail from 'validator/lib/isEmail';
 import isEmpty from 'validator/lib/isEmpty';
 import isLength from 'validator/lib/isLength';
 import useFormLogin from '../hooks/routes/login/useLogin.ts';
-import type { TLoginErrorResponse, TLoginResponse } from '../types/types';
 
 export const Route = createFileRoute('/login')({
   component: LoginRoute,
 });
 
 function LoginRoute() {
+  const navigate = useNavigate({
+    from: '/login',
+  });
+
+  const dispatch = useAppDispatch();
+
+  const { toast } = useToast();
+
   const {
     email: emailInput,
     password: passwordInput,
@@ -25,13 +34,6 @@ function LoginRoute() {
     changePassword,
   } = useFormLogin();
 
-  const navigate = useNavigate({
-    from: '/login',
-  });
-
-  const dispatch = useAppDispatch();
-
-  const { setAuth } = useAuthSlice();
   const { setAlert } = useAlertSlice();
 
   const handleEmail: ChangeEventHandler<HTMLInputElement> = (ev) =>
@@ -62,18 +64,11 @@ function LoginRoute() {
         return;
       }
 
-      const response = await login(emailInput, passwordInput);
+      const responseLogin = await login(emailInput, passwordInput);
 
-      if (response instanceof AxiosError) {
-        dispatch(
-          setAlert({
-            isShown: true,
-            message: (response.response?.data as TLoginErrorResponse).message,
-          }),
-        );
+      const responseDataLogin = responseLogin.data as TLoginResponse;
 
-        return;
-      }
+      putAccessToken(responseDataLogin.data.token);
 
       dispatch(
         setAlert({
@@ -82,29 +77,21 @@ function LoginRoute() {
         }),
       );
 
-      putAccessToken((response.data as TLoginResponse).data.token);
-
-      const { data: dataProfile } = await getProfile();
-
-      const { id, name, email, avatar } = dataProfile.data.user;
-
-      dispatch(
-        setAuth({
-          id,
-          name,
-          email,
-          avatar,
-        }),
-      );
+      toast({
+        title: 'Login Account',
+        description: 'Login is success',
+      });
 
       navigate({ to: '/' });
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response) {
+          const { message } = error.response.data as TErrorResponse;
+
           dispatch(
             setAlert({
               isShown: true,
-              message: (error.response.data as TLoginErrorResponse).message,
+              message: `Error: ${message}`,
             }),
           );
         }

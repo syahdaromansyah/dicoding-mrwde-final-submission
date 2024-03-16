@@ -1,5 +1,5 @@
-import useAuthSlice from '@/hooks/useAuthSlice';
-import type { TThreadResponse } from '@/types/types';
+import useProfileSlice from '@/hooks/useProfileSlice';
+import type { TThreadData } from '@/types/types';
 import cn from 'classnames';
 import { MdOutlineThumbDown } from 'react-icons/md';
 
@@ -7,10 +7,10 @@ export default function DownVoteButton({
   dataThread,
   handleDownVoteThread,
 }: Readonly<{
-  dataThread: TThreadResponse;
+  dataThread: TThreadData;
   handleDownVoteThread: () => Promise<void>;
 }>) {
-  const { auth } = useAuthSlice();
+  const { profile } = useProfileSlice();
 
   return (
     <p>
@@ -18,13 +18,13 @@ export default function DownVoteButton({
         className={cn(
           'flex items-center justify-center gap-x-1 rounded-md px-2 py-1 transition hover:bg-gray-200 dark:hover:bg-gray-600',
           {
-            'dark:bg-gray-600': dataThread.data.detailThread.downVotesBy.find(
-              (downVoteBy) => downVoteBy === auth.id,
+            'dark:bg-gray-600': dataThread.downVotesBy.find(
+              (downVoteBy) => downVoteBy === profile.id,
             ),
           },
           {
-            'bg-gray-200': dataThread.data.detailThread.downVotesBy.find(
-              (downVoteBy) => downVoteBy === auth.id,
+            'bg-gray-200': dataThread.downVotesBy.find(
+              (downVoteBy) => downVoteBy === profile.id,
             ),
           },
         )}
@@ -34,7 +34,7 @@ export default function DownVoteButton({
         <span className="inline-block text-xl">
           <MdOutlineThumbDown />
         </span>
-        {dataThread.data.detailThread.downVotesBy.length}
+        {dataThread.downVotesBy.length}
       </button>
     </p>
   );

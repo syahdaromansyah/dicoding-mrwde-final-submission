@@ -1,5 +1,5 @@
-import useAuthSlice from '@/hooks/useAuthSlice';
-import type { TThreadsData } from '@/types/types';
+import useProfileSlice from '@/hooks/useProfileSlice';
+import type { TThreadsSingleData } from '@/types/types';
 import cn from 'classnames';
 import type { MouseEventHandler } from 'react';
 import { MdOutlineThumbUp } from 'react-icons/md';
@@ -8,26 +8,26 @@ export default function UpVoteButton({
   thread,
   handleUpVoteThread,
 }: Readonly<{
-  thread: TThreadsData;
+  thread: TThreadsSingleData;
   handleUpVoteThread: (
     threadId: string,
   ) => MouseEventHandler<HTMLButtonElement>;
 }>) {
-  const { auth } = useAuthSlice();
+  const { profile } = useProfileSlice();
 
   return (
     <p>
       <button
         className={cn(
-          'flex items-center justify-center gap-x-1 rounded-md px-2 py-1 transition hover:bg-gray-200 dark:hover:bg-gray-600',
+          'flex items-center justify-center gap-x-1 rounded-md px-2 py-1 transition hover:bg-indigo-300 dark:hover:bg-indigo-600',
           {
-            'dark:bg-gray-600': thread.upVotesBy.find(
-              (upVoteBy) => upVoteBy === auth.id,
+            'dark:bg-indigo-600': thread.upVotesBy.find(
+              (upVoteBy) => upVoteBy === profile.id,
             ),
           },
           {
-            'bg-gray-200': thread.upVotesBy.find(
-              (upVoteBy) => upVoteBy === auth.id,
+            'bg-indigo-300': thread.upVotesBy.find(
+              (upVoteBy) => upVoteBy === profile.id,
             ),
           },
         )}

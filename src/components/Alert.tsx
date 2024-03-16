@@ -18,7 +18,7 @@ export default function AlertBox() {
     );
 
   return (
-    <Alert className="min-w-[486px]">
+    <Alert className="w-full min-w-[342px]">
       <AlertOctagon className="h-4 w-4" />
       <div className="flex items-center justify-between gap-x-4">
         <div>

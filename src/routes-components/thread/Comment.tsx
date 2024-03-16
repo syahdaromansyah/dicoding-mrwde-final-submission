@@ -1,5 +1,5 @@
-import useAuthSlice from '@/hooks/useAuthSlice';
-import type { TCommentData, TUsersResponse } from '@/types/types';
+import useProfileSlice from '@/hooks/useProfileSlice';
+import type { TCommentData, TUsersData } from '@/types/types';
 import cn from 'classnames';
 import { formatDistance } from 'date-fns';
 import type { MouseEventHandler } from 'react';
@@ -12,7 +12,7 @@ export default function Comment({
   handleUpVoteComment,
   handleDownVoteComment,
 }: Readonly<{
-  dataUsers: TUsersResponse;
+  dataUsers: TUsersData;
   comment: TCommentData;
   handleUpVoteComment: (
     commentId: string,
@@ -21,7 +21,7 @@ export default function Comment({
     commentId: string,
   ) => MouseEventHandler<HTMLButtonElement>;
 }>) {
-  const { auth } = useAuthSlice();
+  const { profile } = useProfileSlice();
 
   return (
     <div className="rounded-md p-4 dark:bg-gray-950">
@@ -31,16 +31,12 @@ export default function Comment({
             className="block w-6 rounded-full"
             src={
               dataUsers
-                ? dataUsers.data.users.find(
-                    (user) => user.id === comment.owner.id,
-                  )?.avatar
+                ? dataUsers.find((user) => user.id === comment.owner.id)?.avatar
                 : ''
             }
             alt={`${
               dataUsers
-                ? dataUsers.data.users.find(
-                    (user) => user.id === comment.owner.id,
-                  )?.avatar
+                ? dataUsers.find((user) => user.id === comment.owner.id)?.avatar
                 : ''
             } profile`}
           />
@@ -70,15 +66,15 @@ export default function Comment({
           <p>
             <button
               className={cn(
-                'flex items-center justify-center gap-x-1 rounded-md p-1 transition hover:bg-gray-200 dark:hover:bg-gray-600',
+                'flex items-center justify-center gap-x-1 rounded-md px-2 py-1 transition hover:bg-indigo-300 dark:hover:bg-indigo-600',
                 {
-                  'dark:bg-gray-600': comment.upVotesBy.find(
-                    (upVoteBy) => upVoteBy === auth.id,
+                  'dark:bg-indigo-600': comment.upVotesBy.find(
+                    (upVoteBy) => upVoteBy === profile.id,
                   ),
                 },
                 {
-                  'bg-gray-200': comment.upVotesBy.find(
-                    (upVoteBy) => upVoteBy === auth.id,
+                  'bg-indigo-300': comment.upVotesBy.find(
+                    (upVoteBy) => upVoteBy === profile.id,
                   ),
                 },
               )}
@@ -100,12 +96,12 @@ export default function Comment({
                 'flex items-center justify-center gap-x-1 rounded-md p-1 transition hover:bg-gray-200 dark:hover:bg-gray-600',
                 {
                   'dark:bg-gray-600': comment.downVotesBy.find(
-                    (downVoteBy) => downVoteBy === auth.id,
+                    (downVoteBy) => downVoteBy === profile.id,
                   ),
                 },
                 {
                   'bg-gray-200': comment.downVotesBy.find(
-                    (downVoteBy) => downVoteBy === auth.id,
+                    (downVoteBy) => downVoteBy === profile.id,
                   ),
                 },
               )}
