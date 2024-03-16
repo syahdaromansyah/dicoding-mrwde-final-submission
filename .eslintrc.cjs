@@ -17,10 +17,6 @@ module.exports = {
   plugins: ['jsx-a11y', 'react-refresh', 'unused-imports', '@tanstack/query'],
   rules: {
     'no-console': 'error',
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
-    ],
     '@typescript-eslint/no-unused-vars': 'off',
     'unused-imports/no-unused-imports': 'error',
     'unused-imports/no-unused-vars': [
@@ -51,6 +47,7 @@ module.exports = {
     'react/require-default-props': 'off',
     'react/function-component-definition': 'off',
     'default-case': 'off',
+    'react-refresh/only-export-components': 'off',
     '@tanstack/query/exhaustive-deps': 'error',
     '@tanstack/query/no-rest-destructuring': 'warn',
     '@tanstack/query/stable-query-client': 'error',
