@@ -128,7 +128,7 @@ export default function HeaderApp() {
               <div className="rounded-md bg-gray-200/80 p-2 backdrop-blur dark:bg-gray-600/60">
                 <div className="grid gap-y-2">
                   {profile.id ? (
-                    <p className="font-poppins flex gap-x-2 rounded-md border-b px-8 py-3 dark:border-gray-600">
+                    <p className="font-poppins flex gap-x-2 rounded-md border-b border-gray-300 px-8 py-3 dark:border-gray-600">
                       <span className="flex cursor-default items-center gap-x-2">
                         <img
                           className="w-8 rounded-full"

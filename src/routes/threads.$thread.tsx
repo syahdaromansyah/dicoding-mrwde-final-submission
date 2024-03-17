@@ -365,7 +365,7 @@ function Thread() {
           </div>
 
           <h2 className="mb-4 font-space-grotesk text-3xl font-bold md:text-4xl">
-            <span className="inline-block rounded-md px-3 py-2 dark:bg-gray-800">
+            <span className="inline-block rounded-md bg-gray-300 px-3 py-2 dark:bg-gray-800">
               {thread.title}
             </span>
           </h2>
