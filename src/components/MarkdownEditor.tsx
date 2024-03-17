@@ -4,9 +4,7 @@ import cn from 'classnames';
 import rehypeSanitize from 'rehype-sanitize';
 
 const customMDComponents = {
-  preview: (source: string) => {
-    return <MarkdownContent>{source}</MarkdownContent>;
-  },
+  preview: (source: string) => <MarkdownContent>{source}</MarkdownContent>,
 };
 
 export default function MarkdownEditor({
@@ -14,7 +12,7 @@ export default function MarkdownEditor({
   handleValue,
 }: Readonly<{
   value: string;
-  handleValue: (value?: string | undefined) => void;
+  handleValue: (inputValue?: string | undefined) => void;
 }>) {
   return (
     <div

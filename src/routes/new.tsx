@@ -14,6 +14,7 @@ import type { ChangeEvent, ChangeEventHandler, FormEventHandler } from 'react';
 import isEmpty from 'validator/lib/isEmpty';
 import isLength from 'validator/lib/isLength';
 
+// eslint-disable-next-line import/prefer-default-export
 export const Route = createFileRoute('/new')({
   component: NewThread,
 });

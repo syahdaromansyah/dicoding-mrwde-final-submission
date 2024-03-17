@@ -55,42 +55,52 @@ export const profileSlice = createSlice({
   initialState,
   reducers: {
     setProfile(state, action: PayloadAction<TProfilePayloadAction>) {
+      const currentState = state;
+
       const { profile, status, error } = action.payload;
 
-      state.profile.data.user.id = profile.data.user.id;
-      state.profile.data.user.name = profile.data.user.name;
-      state.profile.data.user.email = profile.data.user.email;
-      state.profile.data.user.avatar = profile.data.user.avatar;
+      currentState.profile.data.user.id = profile.data.user.id;
+      currentState.profile.data.user.name = profile.data.user.name;
+      currentState.profile.data.user.email = profile.data.user.email;
+      currentState.profile.data.user.avatar = profile.data.user.avatar;
 
-      state.profile.message = profile.message;
-      state.profile.status = profile.status;
+      currentState.profile.message = profile.message;
+      currentState.profile.status = profile.status;
 
-      state.status = status;
-      state.error = error;
+      currentState.status = status;
+      currentState.error = error;
     },
     setStatusFetch(state, action: PayloadAction<TSetStatusFetch>) {
-      state.status = action.payload.status;
-      state.error = null;
+      const currentState = state;
+
+      currentState.status = action.payload.status;
+      currentState.error = null;
     },
   },
   extraReducers(builder) {
     builder
       .addCase(fetchProfile.pending, (state) => {
-        state.status = 'loading';
+        const currentState = state;
+
+        currentState.status = 'loading';
       })
       .addCase(fetchProfile.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        const currentState = state;
 
-        state.profile.data.user = (
+        currentState.status = 'succeeded';
+
+        currentState.profile.data.user = (
           action.payload as Pick<TProfileResponse, 'data'>
         ).data.user;
 
-        state.profile.message = action.payload.message;
-        state.profile.status = action.payload.status;
+        currentState.profile.message = action.payload.message;
+        currentState.profile.status = action.payload.status;
       })
       .addCase(fetchProfile.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        const currentState = state;
+
+        currentState.status = 'failed';
+        currentState.error = action.error.message;
       });
   },
 });

@@ -14,6 +14,7 @@ import isEmpty from 'validator/lib/isEmpty';
 import isLength from 'validator/lib/isLength';
 import useFormLogin from '../hooks/routes/login/useLogin.ts';
 
+// eslint-disable-next-line import/prefer-default-export
 export const Route = createFileRoute('/login')({
   component: LoginRoute,
 });

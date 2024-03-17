@@ -33,28 +33,36 @@ export const leaderBoardsSlice = createSlice({
   initialState,
   reducers: {
     setStatusFetch(state, action: PayloadAction<TSetStatusFetch>) {
-      state.status = action.payload.status;
-      state.error = null;
+      const currentState = state;
+
+      currentState.status = action.payload.status;
+      currentState.error = null;
     },
   },
   extraReducers(builder) {
     builder
       .addCase(fetchLeaderBoards.pending, (state) => {
-        state.status = 'loading';
+        const currentState = state;
+
+        currentState.status = 'loading';
       })
       .addCase(fetchLeaderBoards.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        const currentState = state;
 
-        state.leaderBoards.data.leaderboards = (
+        currentState.status = 'succeeded';
+
+        currentState.leaderBoards.data.leaderboards = (
           action.payload as Pick<TLeaderBoardsResponse, 'data'>
         ).data.leaderboards;
 
-        state.leaderBoards.message = action.payload.message;
-        state.leaderBoards.status = action.payload.status;
+        currentState.leaderBoards.message = action.payload.message;
+        currentState.leaderBoards.status = action.payload.status;
       })
       .addCase(fetchLeaderBoards.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        const currentState = state;
+
+        currentState.status = 'failed';
+        currentState.error = action.error.message;
       });
   },
 });

@@ -85,28 +85,36 @@ export const threadsSlice = createSlice({
       }
     },
     setStatusFetch(state, action: PayloadAction<TSetStatusFetch>) {
-      state.status = action.payload.status;
-      state.error = null;
+      const currentState = state;
+
+      currentState.status = action.payload.status;
+      currentState.error = null;
     },
   },
   extraReducers(builder) {
     builder
       .addCase(fetchThreads.pending, (state) => {
-        state.status = 'loading';
+        const currentState = state;
+
+        currentState.status = 'loading';
       })
       .addCase(fetchThreads.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        const currentState = state;
 
-        state.threads.data.threads = (
+        currentState.status = 'succeeded';
+
+        currentState.threads.data.threads = (
           action.payload as Pick<TThreadsResponse, 'data'>
         ).data.threads;
 
-        state.threads.message = action.payload.message;
-        state.threads.status = action.payload.status;
+        currentState.threads.message = action.payload.message;
+        currentState.threads.status = action.payload.status;
       })
       .addCase(fetchThreads.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        const currentState = state;
+
+        currentState.status = 'failed';
+        currentState.error = action.error.message;
       });
   },
 });

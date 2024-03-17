@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import HeaderApp from '../routes-components/HeaderApp';
 import PageLayout from '../routes-components/PageLayout';
 
+// eslint-disable-next-line import/prefer-default-export
 export const Route = createRootRoute({
   component: () => <RootRoute />,
   notFoundComponent: () => <RootPageNotFound />,

@@ -32,6 +32,7 @@ import { FaRegComment } from 'react-icons/fa';
 import isEmpty from 'validator/lib/isEmpty';
 import MarkdownContent from '../components/MarkdownContent';
 
+// eslint-disable-next-line import/prefer-default-export
 export const Route = createFileRoute('/threads/$thread')({
   component: Thread,
 });
@@ -163,128 +164,124 @@ function Thread() {
     }
   };
 
-  const handleUpVoteComment = (commentId: string) => {
-    return async () => {
-      try {
-        if (profile.id === '') {
+  const handleUpVoteComment = (commentId: string) => async () => {
+    try {
+      if (profile.id === '') {
+        dispatch(
+          setAlert({
+            isShown: true,
+            message: 'Please login before up voting a comment',
+          }),
+        );
+
+        return;
+      }
+
+      if (thread.id === '') return;
+
+      const foundComment = thread.comments.find(
+        (threadCommment) => threadCommment.id === commentId,
+      );
+
+      if (foundComment) {
+        const isNeutralComment = foundComment.upVotesBy.find(
+          (upVoteBy) => upVoteBy === profile.id,
+        );
+
+        if (isNeutralComment) {
+          await neutralVoteComment(threadId, commentId);
+
+          dispatch(
+            setNeutralVoteComment({
+              profileId: profile.id,
+              commentId: foundComment.id,
+            }),
+          );
+        } else {
+          await upVoteComment(threadId, commentId);
+
+          dispatch(
+            setUpVoteComment({
+              profileId: profile.id,
+              commentId: foundComment.id,
+            }),
+          );
+        }
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          const { message } = error.response.data as TErrorResponse;
+
           dispatch(
             setAlert({
               isShown: true,
-              message: 'Please login before up voting a comment',
+              message: `Error: ${message}`,
             }),
           );
-
-          return;
-        }
-
-        if (thread.id === '') return;
-
-        const foundComment = thread.comments.find(
-          (comment) => comment.id === commentId,
-        );
-
-        if (foundComment) {
-          const isNeutralComment = foundComment.upVotesBy.find(
-            (upVoteBy) => upVoteBy === profile.id,
-          );
-
-          if (isNeutralComment) {
-            await neutralVoteComment(threadId, commentId);
-
-            dispatch(
-              setNeutralVoteComment({
-                profileId: profile.id,
-                commentId: foundComment.id,
-              }),
-            );
-          } else {
-            await upVoteComment(threadId, commentId);
-
-            dispatch(
-              setUpVoteComment({
-                profileId: profile.id,
-                commentId: foundComment.id,
-              }),
-            );
-          }
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response) {
-            const { message } = error.response.data as TErrorResponse;
-
-            dispatch(
-              setAlert({
-                isShown: true,
-                message: `Error: ${message}`,
-              }),
-            );
-          }
         }
       }
-    };
+    }
   };
 
-  const handleDownVoteComment = (commentId: string) => {
-    return async () => {
-      try {
-        if (profile.id === '') {
+  const handleDownVoteComment = (commentId: string) => async () => {
+    try {
+      if (profile.id === '') {
+        dispatch(
+          setAlert({
+            isShown: true,
+            message: 'Please login before down voting a comment',
+          }),
+        );
+
+        return;
+      }
+
+      if (thread.id === '') return;
+
+      const foundComment = thread.comments.find(
+        (threadComment) => threadComment.id === commentId,
+      );
+
+      if (foundComment) {
+        const isNeutralComment = foundComment.downVotesBy.find(
+          (upVoteBy) => upVoteBy === profile.id,
+        );
+
+        if (isNeutralComment) {
+          await neutralVoteComment(threadId, commentId);
+
+          dispatch(
+            setNeutralVoteComment({
+              profileId: profile.id,
+              commentId: foundComment.id,
+            }),
+          );
+        } else {
+          await downVoteComment(threadId, commentId);
+
+          dispatch(
+            setDownVoteComment({
+              profileId: profile.id,
+              commentId: foundComment.id,
+            }),
+          );
+        }
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          const { message } = error.response.data as TErrorResponse;
+
           dispatch(
             setAlert({
               isShown: true,
-              message: 'Please login before down voting a comment',
+              message: `Error: ${message}`,
             }),
           );
-
-          return;
-        }
-
-        if (thread.id === '') return;
-
-        const foundComment = thread.comments.find(
-          (comment) => comment.id === commentId,
-        );
-
-        if (foundComment) {
-          const isNeutralComment = foundComment.downVotesBy.find(
-            (upVoteBy) => upVoteBy === profile.id,
-          );
-
-          if (isNeutralComment) {
-            await neutralVoteComment(threadId, commentId);
-
-            dispatch(
-              setNeutralVoteComment({
-                profileId: profile.id,
-                commentId: foundComment.id,
-              }),
-            );
-          } else {
-            await downVoteComment(threadId, commentId);
-
-            dispatch(
-              setDownVoteComment({
-                profileId: profile.id,
-                commentId: foundComment.id,
-              }),
-            );
-          }
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response) {
-            const { message } = error.response.data as TErrorResponse;
-
-            dispatch(
-              setAlert({
-                isShown: true,
-                message: `Error: ${message}`,
-              }),
-            );
-          }
         }
       }
-    };
+    }
   };
 
   const handleComment:
@@ -297,59 +294,58 @@ function Thread() {
     changeComment(inputValue as string);
   };
 
-  const handleSendComment = (threadId: string) => {
-    return async () => {
-      try {
-        const commentIsNotValid = isEmpty(comment);
+  // eslint-disable-next-line no-shadow
+  const handleSendComment = (threadId: string) => async () => {
+    try {
+      const commentIsNotValid = isEmpty(comment);
 
-        if (commentIsNotValid) {
-          dispatch(
-            setAlert({
-              isShown: true,
-              message: 'Error: Comment input is empty',
-            }),
-          );
-
-          return;
-        }
-
-        const responseCreateComment = await createComment(threadId, comment);
-
-        const { id, content, createdAt, owner, upVotesBy, downVotesBy } = (
-          responseCreateComment.data as TCreateCommentResponse
-        ).data.comment;
-
+      if (commentIsNotValid) {
         dispatch(
-          setComment({
-            id,
-            content,
-            createdAt,
-            owner: {
-              id: owner.id,
-              name: owner.name,
-              avatar: profile.avatar,
-            },
-            upVotesBy,
-            downVotesBy,
+          setAlert({
+            isShown: true,
+            message: 'Error: Comment input is empty',
           }),
         );
 
-        changeComment('');
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response) {
-            const { message } = error.response.data as TErrorResponse;
+        return;
+      }
 
-            dispatch(
-              setAlert({
-                isShown: true,
-                message: `Error: ${message}`,
-              }),
-            );
-          }
+      const responseCreateComment = await createComment(threadId, comment);
+
+      const { id, content, createdAt, owner, upVotesBy, downVotesBy } = (
+        responseCreateComment.data as TCreateCommentResponse
+      ).data.comment;
+
+      dispatch(
+        setComment({
+          id,
+          content,
+          createdAt,
+          owner: {
+            id: owner.id,
+            name: owner.name,
+            avatar: profile.avatar,
+          },
+          upVotesBy,
+          downVotesBy,
+        }),
+      );
+
+      changeComment('');
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          const { message } = error.response.data as TErrorResponse;
+
+          dispatch(
+            setAlert({
+              isShown: true,
+              message: `Error: ${message}`,
+            }),
+          );
         }
       }
-    };
+    }
   };
 
   return (
@@ -449,10 +445,10 @@ function Thread() {
 
           {thread.comments.length > 0 && users.length > 0 && (
             <section className="grid gap-y-4">
-              {thread.comments.map((comment) => (
+              {thread.comments.map((threadComment) => (
                 <Comment
-                  key={comment.id}
-                  comment={comment}
+                  key={threadComment.id}
+                  comment={threadComment}
                   dataUsers={users}
                   handleUpVoteComment={handleUpVoteComment}
                   handleDownVoteComment={handleDownVoteComment}

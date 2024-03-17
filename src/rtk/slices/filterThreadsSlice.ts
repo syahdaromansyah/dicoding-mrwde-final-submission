@@ -19,7 +19,9 @@ export const filterThreadsSlice = createSlice({
     setFilterThreads(state, action: PayloadAction<TFilterThreads>) {
       const { filterThreads } = action.payload;
 
-      state.filterThreads = filterThreads;
+      const currentState = state;
+
+      currentState.filterThreads = filterThreads;
     },
   },
 });

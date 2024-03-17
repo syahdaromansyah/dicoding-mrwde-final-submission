@@ -26,6 +26,7 @@ import { FaRegComment } from 'react-icons/fa';
 import notFoundSvg from '../assets/not-found-illustration.svg';
 import MarkdownContent from '../components/MarkdownContent';
 
+// eslint-disable-next-line import/prefer-default-export
 export const Route = createLazyFileRoute('/')({
   component: Index,
 });
@@ -78,124 +79,120 @@ function Index() {
       }),
     );
 
-  const handleUpVoteThread = (threadId: string) => {
-    return async () => {
-      try {
-        if (profile.id === '') {
+  const handleUpVoteThread = (threadId: string) => async () => {
+    try {
+      if (profile.id === '') {
+        dispatch(
+          setAlert({
+            isShown: true,
+            message: 'Please login before up voting a thread',
+          }),
+        );
+
+        return;
+      }
+
+      if (threads.length === 0) return;
+
+      const foundThread = threads.find((thread) => thread.id === threadId);
+
+      if (foundThread) {
+        const isNeutralVoted = foundThread.upVotesBy.find(
+          (upVoteBy) => upVoteBy === profile.id,
+        );
+
+        if (isNeutralVoted) {
+          await neutralVoteThread(threadId);
+
+          dispatch(
+            setNeutralVoteThread({
+              threadId,
+              profileId: profile.id,
+            }),
+          );
+        } else {
+          await upVoteThread(threadId);
+
+          dispatch(
+            setUpVoteThread({
+              threadId,
+              profileId: profile.id,
+            }),
+          );
+        }
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          const { message } = error.response.data as TErrorResponse;
+
           dispatch(
             setAlert({
               isShown: true,
-              message: 'Please login before up voting a thread',
+              message: `Error: ${message}`,
             }),
           );
-
-          return;
-        }
-
-        if (threads.length === 0) return;
-
-        const foundThread = threads.find((thread) => thread.id === threadId);
-
-        if (foundThread) {
-          const isNeutralVoted = foundThread.upVotesBy.find(
-            (upVoteBy) => upVoteBy === profile.id,
-          );
-
-          if (isNeutralVoted) {
-            await neutralVoteThread(threadId);
-
-            dispatch(
-              setNeutralVoteThread({
-                threadId,
-                profileId: profile.id,
-              }),
-            );
-          } else {
-            await upVoteThread(threadId);
-
-            dispatch(
-              setUpVoteThread({
-                threadId,
-                profileId: profile.id,
-              }),
-            );
-          }
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response) {
-            const { message } = error.response.data as TErrorResponse;
-
-            dispatch(
-              setAlert({
-                isShown: true,
-                message: `Error: ${message}`,
-              }),
-            );
-          }
         }
       }
-    };
+    }
   };
 
-  const handleDownVoteThread = (threadId: string) => {
-    return async () => {
-      try {
-        if (profile.id === '') {
+  const handleDownVoteThread = (threadId: string) => async () => {
+    try {
+      if (profile.id === '') {
+        dispatch(
+          setAlert({
+            isShown: true,
+            message: 'Please login before down voting a thread',
+          }),
+        );
+
+        return;
+      }
+
+      if (threads.length === 0) return;
+
+      const foundThread = threads.find((thread) => thread.id === threadId);
+
+      if (foundThread) {
+        const isNeutralVoted = foundThread.downVotesBy.find(
+          (downVoteBy) => downVoteBy === profile.id,
+        );
+
+        if (isNeutralVoted) {
+          await neutralVoteThread(threadId);
+
+          dispatch(
+            setNeutralVoteThread({
+              threadId,
+              profileId: profile.id,
+            }),
+          );
+        } else {
+          await downVoteThread(threadId);
+
+          dispatch(
+            setDownVoteThread({
+              threadId,
+              profileId: profile.id,
+            }),
+          );
+        }
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response) {
+          const { message } = error.response.data as TErrorResponse;
+
           dispatch(
             setAlert({
               isShown: true,
-              message: 'Please login before down voting a thread',
+              message: `Error: ${message}`,
             }),
           );
-
-          return;
-        }
-
-        if (threads.length === 0) return;
-
-        const foundThread = threads.find((thread) => thread.id === threadId);
-
-        if (foundThread) {
-          const isNeutralVoted = foundThread.downVotesBy.find(
-            (downVoteBy) => downVoteBy === profile.id,
-          );
-
-          if (isNeutralVoted) {
-            await neutralVoteThread(threadId);
-
-            dispatch(
-              setNeutralVoteThread({
-                threadId,
-                profileId: profile.id,
-              }),
-            );
-          } else {
-            await downVoteThread(threadId);
-
-            dispatch(
-              setDownVoteThread({
-                threadId,
-                profileId: profile.id,
-              }),
-            );
-          }
-        }
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response) {
-            const { message } = error.response.data as TErrorResponse;
-
-            dispatch(
-              setAlert({
-                isShown: true,
-                message: `Error: ${message}`,
-              }),
-            );
-          }
         }
       }
-    };
+    }
   };
 
   return (

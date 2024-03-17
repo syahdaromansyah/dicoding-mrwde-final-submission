@@ -17,8 +17,10 @@ export const alertSlice = createSlice({
     setAlert(state, action: PayloadAction<TAlertPayloadAction>) {
       const { isShown, message } = action.payload;
 
-      state.isShown = isShown;
-      state.message = message;
+      const currentState = state;
+
+      currentState.isShown = isShown;
+      currentState.message = message;
     },
   },
 });

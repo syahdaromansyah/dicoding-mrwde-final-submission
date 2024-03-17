@@ -157,10 +157,12 @@ export const threadSlice = createSlice({
       }
     },
     setComment(state, action: PayloadAction<TAddComment>) {
+      const currentState = state;
+
       const { id, content, createdAt, owner, upVotesBy, downVotesBy } =
         action.payload;
 
-      state.thread.data.detailThread.comments = [
+      currentState.thread.data.detailThread.comments = [
         {
           id,
           content,
@@ -173,28 +175,36 @@ export const threadSlice = createSlice({
       ];
     },
     setStatusFetch(state, action: PayloadAction<TSetStatusFetch>) {
-      state.status = action.payload.status;
-      state.error = null;
+      const currentState = state;
+
+      currentState.status = action.payload.status;
+      currentState.error = null;
     },
   },
   extraReducers(builder) {
     builder
       .addCase(fetchThread.pending, (state) => {
-        state.status = 'loading';
+        const currentState = state;
+
+        currentState.status = 'loading';
       })
       .addCase(fetchThread.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        const currentState = state;
 
-        state.thread.data.detailThread = (
+        currentState.status = 'succeeded';
+
+        currentState.thread.data.detailThread = (
           action.payload as Pick<TThreadResponse, 'data'>
         ).data.detailThread;
 
-        state.thread.message = action.payload.message;
-        state.thread.status = action.payload.status;
+        currentState.thread.message = action.payload.message;
+        currentState.thread.status = action.payload.status;
       })
       .addCase(fetchThread.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        const currentState = state;
+
+        currentState.status = 'failed';
+        currentState.error = action.error.message;
       });
   },
 });

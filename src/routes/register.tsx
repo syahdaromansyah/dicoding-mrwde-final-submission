@@ -13,6 +13,7 @@ import isEmail from 'validator/lib/isEmail';
 import isEmpty from 'validator/lib/isEmpty';
 import isLength from 'validator/lib/isLength';
 
+// eslint-disable-next-line import/prefer-default-export
 export const Route = createFileRoute('/register')({
   component: Register,
 });

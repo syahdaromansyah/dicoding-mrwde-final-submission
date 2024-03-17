@@ -6,6 +6,7 @@ import TableHead from '@/routes-components/leaderboards/TableHead';
 import TableRowSkeleton from '@/routes-components/leaderboards/TableRowSkeleton';
 import { createFileRoute } from '@tanstack/react-router';
 
+// eslint-disable-next-line import/prefer-default-export
 export const Route = createFileRoute('/leaderboards')({
   component: LeaderBoards,
 });
