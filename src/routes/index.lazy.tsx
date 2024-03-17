@@ -13,6 +13,7 @@ import {
 import ThreadsCategories from '@/routes-components/ThreadsCategories';
 import CategorySkeleton from '@/routes-components/threads/CategorySkeleton';
 import DownVoteButton from '@/routes-components/threads/DownVoteButton';
+import ThreadNotFound from '@/routes-components/threads/ThreadNotFound';
 import ThreadSkeleton from '@/routes-components/threads/ThreadSkeleton';
 import UpVoteButton from '@/routes-components/threads/UpVoteButton';
 import { useAppDispatch } from '@/rtk/hooks';
@@ -23,7 +24,6 @@ import { formatDistance } from 'date-fns';
 import { motion } from 'framer-motion';
 import { type ChangeEventHandler } from 'react';
 import { FaRegComment } from 'react-icons/fa';
-import notFoundSvg from '../assets/not-found-illustration.svg';
 import MarkdownContent from '../components/MarkdownContent';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -334,23 +334,7 @@ function Index() {
 
               {statusThreads === 'succeeded' &&
                 filteredThreads.length === 0 && (
-                  <div className="h-full pt-4">
-                    <div className="grid gap-y-3">
-                      <img
-                        className="mx-auto block h-[178px] w-[256px] md:h-[228px] md:w-[326px]"
-                        src={notFoundSvg}
-                        alt="Threads is empty"
-                      />
-
-                      <p className="text-center">
-                        Thread with name{' '}
-                        <span className="inline-block rounded-md px-2 py-1 dark:bg-gray-700">
-                          {filterThreads}
-                        </span>{' '}
-                        is not found
-                      </p>
-                    </div>
-                  </div>
+                  <ThreadNotFound filterThreads={filterThreads} />
                 )}
             </>
           ) : (
