@@ -6,7 +6,7 @@ type TFilterThreads = {
   filterThreads: string;
 };
 
-const initialState: {
+export const initialState: {
   filterThreads: string;
 } = {
   filterThreads: '',

@@ -26,7 +26,7 @@ type TAddComment = {
   downVotesBy: string[];
 };
 
-const initialState: {
+export const initialState: {
   thread: TThreadResponse;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null | undefined;

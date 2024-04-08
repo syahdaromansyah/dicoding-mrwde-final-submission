@@ -9,7 +9,7 @@ type TSetVoteThread = {
   profileId: string;
 };
 
-const initialState: {
+export const initialState: {
   threads: TThreadsResponse;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null | undefined;
