@@ -11,6 +11,8 @@
     "preview": "vite preview",
     "format": "prettier -w \"**/*.{js,jsx,ts,tsx,json,yaml,yml,css,md,mdx}\"",
     "format-c": "prettier -c \"**/*.{js,jsx,ts,tsx,json,yaml,yml,css,md,mdx}\"",
+    "test": "vitest",
+    "test:no-watch": "vitest --watch=false",
     "prepare": "husky"
   },
   "lint-staged": {
