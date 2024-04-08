@@ -1,4 +1,4 @@
-import type { TThreadsResponse } from '@/types/types.ts';
+import type { TThreadsResponse } from '../../../src/types/types.ts';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { afterEach, describe, expect, test } from 'vitest';
 import threadsReducer, {
