@@ -27,6 +27,6 @@
 
     "types": ["vitest/jsdom"]
   },
-  "include": ["src", ".temp/root", "__test__"],
+  "include": ["src", ".temp/root"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
