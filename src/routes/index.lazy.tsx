@@ -10,12 +10,12 @@ import {
   neutralVoteThread,
   upVoteThread,
 } from '@/network-data/network-data';
+import DownVoteButton from '@/routes-components/DownVoteButton';
 import ThreadsCategories from '@/routes-components/ThreadsCategories';
+import UpVoteButton from '@/routes-components/UpVoteButton';
 import CategorySkeleton from '@/routes-components/threads/CategorySkeleton';
-import DownVoteButton from '@/routes-components/threads/DownVoteButton';
 import ThreadNotFound from '@/routes-components/threads/ThreadNotFound';
 import ThreadSkeleton from '@/routes-components/threads/ThreadSkeleton';
-import UpVoteButton from '@/routes-components/threads/UpVoteButton';
 import { useAppDispatch } from '@/rtk/hooks';
 import type { TErrorResponse } from '@/types/types';
 import { Link, createLazyFileRoute } from '@tanstack/react-router';
@@ -286,13 +286,15 @@ function Index() {
 
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 ">
                       <UpVoteButton
-                        thread={thread}
-                        handleUpVoteThread={handleUpVoteThread}
+                        profile={profile}
+                        upVotesBy={thread.upVotesBy}
+                        handleUpVoteThread={handleUpVoteThread(thread.id)}
                       />
 
                       <DownVoteButton
-                        thread={thread}
-                        handleDownVoteThread={handleDownVoteThread}
+                        profile={profile}
+                        downVotesBy={thread.downVotesBy}
+                        handleDownVoteThread={handleDownVoteThread(thread.id)}
                       />
                       <div>
                         <p className="flex items-center justify-center gap-x-1">
