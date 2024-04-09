@@ -10,6 +10,7 @@ module.exports = {
     'plugin:jsx-a11y/recommended',
     'plugin:react/recommended',
     'plugin:@tanstack/eslint-plugin-query/recommended',
+    'plugin:cypress/recommended',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
