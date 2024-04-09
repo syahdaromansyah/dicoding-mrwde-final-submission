@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import useAlertSlice from '@/hooks/useAlertSlice.ts';
+import useProfileSlice from '@/hooks/useProfileSlice.ts';
 import { putAccessToken } from '@/network-data/network-data';
 import { login } from '@/network-data/network-data.ts';
 import { useAppDispatch } from '@/rtk/hooks.ts';
@@ -36,6 +37,7 @@ function LoginRoute() {
   } = useFormLogin();
 
   const { setAlert } = useAlertSlice();
+  const { fetchProfile } = useProfileSlice();
 
   const handleEmail: ChangeEventHandler<HTMLInputElement> = (ev) =>
     changeEmail(ev.target.value);
@@ -70,6 +72,8 @@ function LoginRoute() {
       const responseDataLogin = responseLogin.data as TLoginResponse;
 
       putAccessToken(responseDataLogin.data.token);
+
+      dispatch(fetchProfile());
 
       dispatch(
         setAlert({
