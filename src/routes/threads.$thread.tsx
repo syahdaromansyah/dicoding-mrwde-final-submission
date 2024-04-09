@@ -16,12 +16,12 @@ import {
   upVoteComment,
   upVoteThread,
 } from '@/network-data/network-data';
+import DownVoteButton from '@/routes-components/DownVoteButton';
 import ThreadsCategories from '@/routes-components/ThreadsCategories';
+import UpVoteButton from '@/routes-components/UpVoteButton';
 import Avatar from '@/routes-components/thread/Avatar';
 import Comment from '@/routes-components/thread/Comment';
 import CreatedAtContent from '@/routes-components/thread/CreatedAtContent';
-import DownVoteButton from '@/routes-components/thread/DownVoteButton';
-import UpVoteButton from '@/routes-components/thread/UpVoteButton';
 import { useAppDispatch } from '@/rtk/hooks';
 import type { TCreateCommentResponse, TErrorResponse } from '@/types/types';
 import { Link, createFileRoute } from '@tanstack/react-router';
@@ -376,12 +376,14 @@ function Thread() {
 
           <div className="lg: mb-4 flex flex-wrap items-center gap-4 border-b-2 border-gray-200 pb-4 dark:border-gray-800">
             <UpVoteButton
-              dataThread={thread}
+              profile={profile}
+              upVotesBy={thread.upVotesBy}
               handleUpVoteThread={handleUpVoteThread}
             />
 
             <DownVoteButton
-              dataThread={thread}
+              profile={profile}
+              downVotesBy={thread.downVotesBy}
               handleDownVoteThread={handleDownVoteThread}
             />
 
@@ -448,10 +450,13 @@ function Thread() {
               {thread.comments.map((threadComment) => (
                 <Comment
                   key={threadComment.id}
+                  profile={profile}
                   comment={threadComment}
                   dataUsers={users}
-                  handleUpVoteComment={handleUpVoteComment}
-                  handleDownVoteComment={handleDownVoteComment}
+                  handleUpVoteComment={handleUpVoteComment(threadComment.id)}
+                  handleDownVoteComment={handleDownVoteComment(
+                    threadComment.id,
+                  )}
                 />
               ))}
             </section>
