@@ -1,6 +1,9 @@
 import AlertBox from '@/components/Alert';
 import { Toaster } from '@/components/ui/toaster';
+import useLogOut from '@/hooks/routes/root/useLogOut';
 import useAlertSlice from '@/hooks/useAlertSlice';
+import useFetchProfile from '@/hooks/useFetchProfile';
+import useProfileSlice from '@/hooks/useProfileSlice';
 import RootPageNotFound from '@/routes-components/RootPageNotFound';
 import { Outlet, createRootRoute } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
@@ -16,6 +19,10 @@ export const Route = createRootRoute({
 
 function RootRoute() {
   const { alert } = useAlertSlice();
+  const { profile } = useProfileSlice();
+  const { handleLogOut } = useLogOut();
+
+  useFetchProfile();
 
   return (
     <>
@@ -48,7 +55,7 @@ function RootRoute() {
             <div className="mx-auto h-full min-h-full overflow-y-auto scrollbar-thin scrollbar-track-slate-800 scrollbar-thumb-slate-700 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-corner-rounded-full">
               <div className="mx-auto max-w-5xl pb-6">
                 <div className="sticky left-0 top-4 z-20 mb-8">
-                  <HeaderApp />
+                  <HeaderApp profile={profile} handleLogOut={handleLogOut} />
                 </div>
 
                 <main className="h-[calc(100%-108px)]">
