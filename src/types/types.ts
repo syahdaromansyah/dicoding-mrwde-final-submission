@@ -11,6 +11,13 @@ export type TProfileResponse = {
   };
 };
 
+export type TProfileData = {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+};
+
 export type TRegisterResponse = {
   status: string;
   message: string;
