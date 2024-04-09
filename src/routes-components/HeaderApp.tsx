@@ -1,9 +1,6 @@
-import { useToast } from '@/components/ui/use-toast';
 import useCloseNav from '@/hooks/routes-component/HeaderApp/useCloseNav';
-import useProfileSlice from '@/hooks/useProfileSlice';
-import { removeAccessToken } from '@/network-data/network-data';
-import { useAppDispatch } from '@/rtk/hooks';
-import { Link, useNavigate } from '@tanstack/react-router';
+import type { TProfileData } from '@/types/types';
+import { Link } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 import { useRef } from 'react';
@@ -40,47 +37,16 @@ function NavLink({
   );
 }
 
-export default function HeaderApp() {
+export default function HeaderApp({
+  profile,
+  handleLogOut,
+}: Readonly<{
+  profile: TProfileData;
+  handleLogOut: () => void;
+}>) {
   const navBtnElem = useRef<HTMLButtonElement | null>(null);
 
   const { isShown, show, hide } = useShow();
-
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-
-  const { toast } = useToast();
-
-  const { profile, setProfile } = useProfileSlice();
-
-  const handleLogOut = () => {
-    removeAccessToken();
-
-    dispatch(
-      setProfile({
-        profile: {
-          message: '',
-          status: '',
-          data: {
-            user: {
-              id: '',
-              name: '',
-              email: '',
-              avatar: '',
-            },
-          },
-        },
-        status: 'idle',
-        error: null,
-      }),
-    );
-
-    toast({
-      title: 'Log Out Account',
-      description: 'Log out account is success',
-    });
-
-    navigate({ to: '/login' });
-  };
 
   const handleNav = () => {
     if (isShown) hide();
