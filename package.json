@@ -13,6 +13,7 @@
     "format-c": "prettier -c \"**/*.{js,jsx,ts,tsx,json,yaml,yml,css,md,mdx}\"",
     "test": "vitest",
     "test:no-watch": "vitest --watch=false",
+    "cy:open": "cypress open",
     "prepare": "husky"
   },
   "lint-staged": {
