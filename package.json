@@ -14,6 +14,7 @@
     "test": "vitest",
     "test:no-watch": "vitest --watch=false",
     "cy:open": "cypress open",
+    "e2e": "cypress run",
     "prepare": "husky"
   },
   "lint-staged": {
