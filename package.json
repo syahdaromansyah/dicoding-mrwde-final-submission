@@ -17,6 +17,11 @@
     "e2e": "cypress run",
     "prepare": "husky"
   },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint",
     "*.{js,jsx,ts,tsx,json,yaml,yml,css,md,mdx}": "prettier -w"
