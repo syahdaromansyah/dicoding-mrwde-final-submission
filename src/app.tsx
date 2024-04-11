@@ -17,14 +17,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
-// Render the app
-const rootElement = document.getElementById('app') as HTMLDivElement;
-if (!rootElement.innerHTML) {
-  createRoot(rootElement).render(
-    <React.StrictMode>
-      <ReduxProvider store={setupStore()}>
-        <RouterProvider router={router} />
-      </ReduxProvider>
-    </React.StrictMode>,
-  );
+async function enableMSW() {
+  if (import.meta.env.MODE === 'development:msw') {
+    const worker = await import('./msw/browser.ts');
+    await worker.default.start();
+  }
+
+  // Render the app
+  const rootElement = document.getElementById('app') as HTMLDivElement;
+  if (!rootElement.innerHTML) {
+    createRoot(rootElement).render(
+      <React.StrictMode>
+        <ReduxProvider store={setupStore()}>
+          <RouterProvider router={router} />
+        </ReduxProvider>
+      </React.StrictMode>,
+    );
+  }
 }
+
+enableMSW();
