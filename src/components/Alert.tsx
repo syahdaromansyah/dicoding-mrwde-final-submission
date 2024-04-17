@@ -29,8 +29,13 @@ export default function AlertBox() {
         </div>
 
         <div>
-          <Button type="button" onClick={handleCloseAlert}>
+          <Button
+            type="button"
+            onClick={handleCloseAlert}
+            data-cy="alert-close-btn"
+          >
             <X />
+            <span className="sr-only">Close alert</span>
           </Button>
         </div>
       </div>
