@@ -3,6 +3,13 @@ import { fetchUsers } from '../../../src/rtk/slices/usersSlice';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { afterAll, describe, expect, test, vi } from 'vitest';
 
+/**
+ * Unit Test Scenarios
+ * ~ The Users Thunk Function Test
+ *    - should return the users response to
+ *      store when fetching is fulfilled
+ */
+
 const usersResponseData = {
   data: {
     status: 'success',
@@ -44,7 +51,7 @@ vi.mock('../../../src/network-data/network-data.ts', async (importOriginal) => {
   };
 });
 
-describe('The Users Thunk Function', () => {
+describe('The Users Thunk Function Test', () => {
   afterAll(() => {
     vi.doUnmock('../../../src/network-data/network-data.ts');
   });

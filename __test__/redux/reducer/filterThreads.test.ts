@@ -5,7 +5,14 @@ import filterThreadsReducer, {
   setFilterThreads,
 } from '../../../src/rtk/slices/filterThreadsSlice.ts';
 
-describe('The Thread Reducer', () => {
+/**
+ * Unit Test Scenarios
+ * ~ The Thread Reducer Test
+ *    - should return the initial state
+ *    - should update the filter threads state
+ */
+
+describe('The Thread Reducer Test', () => {
   let initialStateTest: {
     filterThreads: string;
   };

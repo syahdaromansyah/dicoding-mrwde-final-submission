@@ -3,6 +3,13 @@ import { fetchLeaderBoards } from '../../../src/rtk/slices/leaderBoardsSlice';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { afterAll, describe, expect, test, vi } from 'vitest';
 
+/**
+ * Unit Test Scenarios
+ * ~ The Leaderboards Thunk Function Test
+ *    - should return the leaderboards response to
+ *      store when fetching is fulfilled
+ */
+
 const leaderBoardsResponseData = {
   data: {
     status: 'success',
@@ -44,7 +51,7 @@ vi.mock('@/network-data/network-data.ts', async (importOriginal) => {
   };
 });
 
-describe('The Leaderboards Thunk Function', () => {
+describe('The Leaderboards Thunk Function Test', () => {
   afterAll(() => {
     vi.doUnmock('../../../src/network-data/network-data.ts');
   });

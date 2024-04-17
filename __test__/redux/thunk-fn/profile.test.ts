@@ -3,6 +3,13 @@ import { fetchProfile } from '../../../src/rtk/slices/profileSlice';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
+/**
+ * Unit Test Scenarios
+ * ~ The Profile Thunk Function Test
+ *    - should return the profile response to
+ *      store when fetching is fulfilled
+ */
+
 const profileResponseData = {
   data: {
     status: 'success',
@@ -30,7 +37,7 @@ vi.mock('@/network-data/network-data.ts', async (importOriginal) => {
   };
 });
 
-describe('The Profile Thunk Function', () => {
+describe('The Profile Thunk Function Test', () => {
   afterEach(() => {
     vi.doUnmock('../../../src/network-data/network-data.ts');
   });

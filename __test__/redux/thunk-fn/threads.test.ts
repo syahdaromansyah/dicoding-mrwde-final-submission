@@ -3,6 +3,13 @@ import { fetchThreads } from '../../../src/rtk/slices/threadsSlice';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { afterAll, describe, expect, test, vi } from 'vitest';
 
+/**
+ * Unit Test Scenarios
+ * ~ The Threads Thunk Function Test
+ *    - should return the threads response to
+ *      store when fetching is fulfilled
+ */
+
 const threadsResponseData = {
   data: {
     status: 'success',
@@ -48,7 +55,7 @@ vi.mock('../../../src/network-data/network-data.ts', async (importOriginal) => {
   };
 });
 
-describe('The Threads Thunk Function', () => {
+describe('The Threads Thunk Function Test', () => {
   afterAll(() => {
     vi.doUnmock('../../../src/network-data/network-data.ts');
   });

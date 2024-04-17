@@ -6,6 +6,13 @@ import { afterEach, describe, expect, test } from 'vitest';
 import DownVoteButton from '../../../src/routes-components/DownVoteButton.tsx';
 import renderWithProvider from '../_utils/custom-redux-wrapper.tsx';
 
+/**
+ * Integration Test Scenarios
+ * ~ The Down Vote Button Component Test
+ *    - Should show zero users vote
+ *    - Should show some numbers of users vote
+ */
+
 const profileDummy = {
   id: '',
   name: '',
@@ -13,7 +20,7 @@ const profileDummy = {
   avatar: '',
 };
 
-describe('The Down Vote Button Component', () => {
+describe('The Down Vote Button Component Test', () => {
   afterEach(() => {
     cleanup();
   });

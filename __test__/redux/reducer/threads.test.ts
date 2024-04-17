@@ -9,7 +9,25 @@ import threadsReducer, {
   setUpVoteThread,
 } from '../../../src/rtk/slices/threadsSlice.ts';
 
-describe('The Threads Reducer', () => {
+/**
+ * Unit Test Scenarios
+ * ~ The Threads Reducer Test
+ *    - should return the initial state
+ *    - should add an user id into an
+ *      up vote list on a thread
+ *    - should add an user id into an
+ *      down vote list list on a thread
+ *    - should remove an user id in
+ *      upVotesBy list when down voting a thread
+ *    - should remove an user id in
+ *      downVotesBy list when up voting a thread
+ *    - should remove an user id in
+ *      upVotesBy and downVotesBy list
+ *      when neutral voting a thread
+ *    - should change the status fetch state
+ */
+
+describe('The Threads Reducer Test', () => {
   let initialStateTest: {
     threads: TThreadsResponse;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';

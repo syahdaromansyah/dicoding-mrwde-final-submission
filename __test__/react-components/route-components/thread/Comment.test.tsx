@@ -6,6 +6,12 @@ import { afterEach, describe, expect, test } from 'vitest';
 import Comment from '../../../../src/routes-components/thread/Comment.tsx';
 import renderWithProvider from '../../_utils/custom-redux-wrapper.tsx';
 
+/**
+ * Integration Test Scenarios
+ * ~ The Comment Component Test
+ *    - Should show contents of a commentary
+ */
+
 const profileDummy = {
   id: '',
   name: '',
@@ -34,7 +40,7 @@ const sampleUsers = [
   },
 ];
 
-describe('The Comment Component', () => {
+describe('The Comment Component Test', () => {
   afterEach(() => {
     cleanup();
   });
