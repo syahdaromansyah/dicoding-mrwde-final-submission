@@ -95,6 +95,8 @@ export const profileSlice = createSlice({
 
         currentState.profile.message = action.payload.message;
         currentState.profile.status = action.payload.status;
+
+        currentState.error = null;
       })
       .addCase(fetchProfile.rejected, (state, action) => {
         const currentState = state;
