@@ -52,7 +52,10 @@ function RootRoute() {
           </div>
 
           <div className="h-full max-h-full flex-1">
-            <div className="mx-auto h-full min-h-full overflow-y-auto scrollbar-thin scrollbar-track-slate-800 scrollbar-thumb-slate-700 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-corner-rounded-full">
+            <div
+              className="mx-auto h-full min-h-full overflow-y-auto scrollbar-thin scrollbar-track-slate-800 scrollbar-thumb-slate-700 scrollbar-track-rounded-full scrollbar-thumb-rounded-full scrollbar-corner-rounded-full"
+              data-cy="page-content-container"
+            >
               <div className="mx-auto max-w-5xl pb-6">
                 <div className="sticky left-0 top-4 z-20 mb-8">
                   <HeaderApp profile={profile} handleLogOut={handleLogOut} />
