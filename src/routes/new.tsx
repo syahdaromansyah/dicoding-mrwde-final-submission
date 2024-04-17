@@ -7,7 +7,7 @@ import useAlertSlice from '@/hooks/useAlertSlice';
 import { createThread } from '@/network-data/network-data';
 import { useAppDispatch } from '@/rtk/hooks';
 import type { TCreateThreadResponse, TErrorResponse } from '@/types/types';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import type { ContextStore } from '@uiw/react-md-editor';
 import { AxiosError } from 'axios';
 import type { ChangeEvent, ChangeEventHandler, FormEventHandler } from 'react';
@@ -17,6 +17,17 @@ import isLength from 'validator/lib/isLength';
 // eslint-disable-next-line import/prefer-default-export
 export const Route = createFileRoute('/new')({
   component: NewThread,
+  beforeLoad: ({ context, location }) => {
+    if (context.authProfile.id === '') {
+      throw redirect({
+        to: '/login',
+        replace: true,
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+  },
 });
 
 function NewThread() {
