@@ -113,7 +113,7 @@ function LoginRoute() {
           </h1>
 
           <p className="text-center">
-            Don&lsquo;t have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link className="inline-block underline" to="/register">
               Sign up
             </Link>
