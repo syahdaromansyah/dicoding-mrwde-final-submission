@@ -74,6 +74,7 @@ export default function HeaderApp({
                 type="button"
                 className="btn-nav block rounded-full border border-gray-400 p-2 ring-offset-2 transition hover:bg-gray-300 hover:ring-blue-600 focus:ring dark:border-gray-400 dark:outline-none dark:ring-offset-gray-700 dark:hover:bg-gray-700"
                 onClick={handleNav}
+                data-cy="app-nav-header-menu-btn"
               >
                 <HiBars2 className="text-xl" />
                 <span className="sr-only">Open navigation menu</span>
