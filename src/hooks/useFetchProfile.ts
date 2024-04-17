@@ -30,6 +30,10 @@ const useFetchProfile = () => {
       dispatch(fetchProfile());
     }
   }, [dispatch, status]);
+
+  return {
+    isDone: fetchOnce,
+  };
 };
 
 export default useFetchProfile;
