@@ -115,6 +115,7 @@ function Register() {
                 placeholder="Name"
                 value={name}
                 onChange={handleName}
+                data-cy="name-input"
               />
             </p>
 
@@ -125,6 +126,7 @@ function Register() {
                 placeholder="Email"
                 value={email}
                 onChange={handleEmail}
+                data-cy="email-input"
               />
             </p>
 
@@ -136,6 +138,7 @@ function Register() {
                 placeholder="Password"
                 value={password}
                 onChange={handlePassword}
+                data-cy="password-input"
               />
             </p>
           </div>
@@ -143,7 +146,11 @@ function Register() {
 
         <section className="mx-auto mb-4 max-w-lg">
           <p>
-            <Button className="inline-block w-full" type="submit">
+            <Button
+              className="inline-block w-full"
+              type="submit"
+              data-cy="register-btn"
+            >
               Submit
             </Button>
           </p>

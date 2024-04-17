@@ -237,6 +237,7 @@ function Index() {
               placeholder="Filter Threads"
               value={filterThreads}
               onChange={handleFilterThreads}
+              data-cy="filter-threads-input"
             />
           </p>
         </div>

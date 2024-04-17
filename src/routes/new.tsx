@@ -120,6 +120,7 @@ function NewThread() {
               placeholder="Title"
               value={title}
               onChange={handleTitle}
+              data-cy="title-input"
             />
           </p>
 
@@ -132,18 +133,23 @@ function NewThread() {
               placeholder="Category"
               value={category}
               onChange={handleCategory}
+              data-cy="category-input"
             />
           </p>
         </div>
       </section>
 
-      <section className="mb-4 h-72 px-2 xl:px-0">
+      <section className="mb-4 h-72 px-2 xl:px-0" data-cy="body-input">
         <MarkdownEditor value={body} handleValue={handleBody} />
       </section>
 
       <section className="mb-4 px-2 xl:px-0">
         <p>
-          <Button className="inline-block w-full" type="submit">
+          <Button
+            className="inline-block w-full"
+            type="submit"
+            data-cy="create-btn"
+          >
             Create Thread
           </Button>
         </p>

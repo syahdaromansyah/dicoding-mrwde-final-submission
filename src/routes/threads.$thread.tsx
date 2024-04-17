@@ -409,7 +409,7 @@ function Thread() {
 
           {profile.id ? (
             <div className="mb-4 grid gap-y-4">
-              <div className="h-64">
+              <div className="h-64" data-cy="comment-input">
                 <MarkdownEditor value={comment} handleValue={handleComment} />
               </div>
 
@@ -419,6 +419,7 @@ function Thread() {
                     className="inline-block w-full"
                     type="button"
                     onClick={handleSendComment(thread.id)}
+                    data-cy="send-comment-btn"
                   >
                     Send Comment
                   </Button>

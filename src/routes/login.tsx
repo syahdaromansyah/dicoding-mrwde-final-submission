@@ -131,6 +131,7 @@ function LoginRoute() {
                 placeholder="Email"
                 value={emailInput}
                 onChange={handleEmail}
+                data-cy="email-input"
               />
             </p>
 
@@ -142,6 +143,7 @@ function LoginRoute() {
                 placeholder="Password"
                 value={passwordInput}
                 onChange={handlePassword}
+                data-cy="password-input"
               />
             </p>
           </div>
@@ -149,7 +151,11 @@ function LoginRoute() {
 
         <section className="mx-auto mb-4 max-w-lg">
           <p>
-            <Button className="inline-block w-full" type="submit">
+            <Button
+              className="inline-block w-full"
+              type="submit"
+              data-cy="login-btn"
+            >
               Submit
             </Button>
           </p>
