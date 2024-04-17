@@ -2,6 +2,8 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider as ReduxProvider } from 'react-redux';
+import useFetchProfile from './hooks/useFetchProfile.ts';
+import useProfileSlice from './hooks/useProfileSlice.ts';
 import './index.css';
 import { routeTree } from './routeTree.gen.ts';
 import { setupStore } from './rtk/store.ts';
@@ -9,12 +11,30 @@ import { setupStore } from './rtk/store.ts';
 const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
+  context: {
+    authProfile: undefined!,
+  },
 });
 
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
+}
+
+function RouterApp() {
+  const { profile, statusProfile } = useProfileSlice();
+  const { isDone } = useFetchProfile();
+
+  return isDone &&
+    (statusProfile === 'succeeded' || statusProfile === 'failed') ? (
+    <RouterProvider
+      router={router}
+      context={{
+        authProfile: profile,
+      }}
+    />
+  ) : null;
 }
 
 async function enableMSW() {
@@ -29,7 +49,7 @@ async function enableMSW() {
     createRoot(rootElement).render(
       <React.StrictMode>
         <ReduxProvider store={setupStore()}>
-          <RouterProvider router={router} />
+          <RouterApp />
         </ReduxProvider>
       </React.StrictMode>,
     );

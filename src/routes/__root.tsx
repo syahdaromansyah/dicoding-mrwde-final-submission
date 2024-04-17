@@ -2,17 +2,21 @@ import AlertBox from '@/components/Alert';
 import { Toaster } from '@/components/ui/toaster';
 import useLogOut from '@/hooks/routes/root/useLogOut';
 import useAlertSlice from '@/hooks/useAlertSlice';
-import useFetchProfile from '@/hooks/useFetchProfile';
 import useProfileSlice from '@/hooks/useProfileSlice';
 import RootPageNotFound from '@/routes-components/RootPageNotFound';
-import { Outlet, createRootRoute } from '@tanstack/react-router';
+import type { TProfileData } from '@/types/types';
+import { Outlet, createRootRouteWithContext } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { AnimatePresence, motion } from 'framer-motion';
 import HeaderApp from '../routes-components/HeaderApp';
 import PageLayout from '../routes-components/PageLayout';
 
+type RouterContext = {
+  authProfile: TProfileData;
+};
+
 // eslint-disable-next-line import/prefer-default-export
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => <RootRoute />,
   notFoundComponent: () => <RootPageNotFound />,
 });
@@ -21,8 +25,6 @@ function RootRoute() {
   const { alert } = useAlertSlice();
   const { profile } = useProfileSlice();
   const { handleLogOut } = useLogOut();
-
-  useFetchProfile();
 
   return (
     <>
