@@ -215,7 +215,7 @@ function Index() {
                 key={category}
                 className="inline-block rounded-md border border-gray-300 px-2 py-1 dark:border-gray-600"
               >
-                #{category.split(' ').join('')}
+                #{category.split(' ').join('').toLowerCase()}
               </p>
             ))
           ) : (

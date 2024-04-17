@@ -360,7 +360,7 @@ function Thread() {
         <article>
           <div className="mb-4">
             <ThreadsCategories>
-              {thread.category.split(' ').join('')}
+              {thread.category.split(' ').join('').toLowerCase()}
             </ThreadsCategories>
           </div>
 
