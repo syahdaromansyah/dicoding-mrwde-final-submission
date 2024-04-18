@@ -16,6 +16,7 @@
     "test:no-watch": "vitest --watch=false",
     "cy:open": "cypress open",
     "e2e": "cypress run",
+    "ci:test": "vitest --watch=false && start-server-and-test dev:msw http://localhost:5173 e2e",
     "prepare": "husky"
   },
   "msw": {
