@@ -160,7 +160,7 @@ describe('The Login Page Test', () => {
     cy.get('@alertTxt');
   });
 
-  it.only('should redirect to index page when login is valid', () => {
+  it('should redirect to index page when login is valid', () => {
     cy.visit('/login');
 
     cy.get(emailInput).type('foodoe@email.com');
