@@ -1,6 +1,6 @@
 {
-  "name": "dcd-fst-subs-forum-app",
-  "description": "The first submission of the 'Menjadi React Web Developer Expert' (Become an Expert React Web Developer) course on the Dicoding about creating a forum app with React.js",
+  "name": "dcd-final-subs-forum-app",
+  "description": "The final submission of the 'Menjadi React Web Developer Expert' (Become an Expert React Web Developer) course on the Dicoding about creating a forum app with React.js",
   "private": true,
   "type": "module",
   "author": "Syahda Romansyah <syahdarom@gmail.com>",
