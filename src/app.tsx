@@ -34,7 +34,19 @@ function RouterApp() {
         authProfile: profile,
       }}
     />
-  ) : null;
+  ) : (
+    <RouterProvider
+      router={router}
+      context={{
+        authProfile: {
+          id: '',
+          name: '',
+          email: '',
+          avatar: '',
+        },
+      }}
+    />
+  );
 }
 
 async function enableMSW() {
