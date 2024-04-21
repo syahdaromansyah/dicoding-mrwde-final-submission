@@ -12,8 +12,6 @@ dist
 dist-ssr
 *.local
 cypress/screenshots
-public/mockServiceWorker.*
-src/routeTree.gen.*
 
 # Editor directories and files
 .vscode/*
