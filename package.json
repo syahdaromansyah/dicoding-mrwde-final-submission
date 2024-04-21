@@ -25,8 +25,8 @@
     ]
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": "eslint",
-    "*.{js,jsx,ts,tsx,json,yaml,yml,css,md,mdx}": "prettier -w"
+    "*.{js,cjs,mjs,jsx,ts,cts,mts,tsx}": "eslint",
+    "*.{js,cjs,mjs,jsx,ts,cts,mts,tsx,json,yaml,yml,css,md,mdx}": "prettier -w"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.0.6",
