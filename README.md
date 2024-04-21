@@ -2,6 +2,6 @@
 
 The **Become an Expert React Web Developer** course on Dicoding.
 
-## The _Membangun Aplikasi React dengan Redux_ Submission (The Final Submission)
+## The _Menerapkan Automation Testing dan CI/CD pada Aplikasi Forum Diskusi_ Submission (The Final Submission)
 
-The **Building React Applications with Redux** submission (the final submission).
+The **Implementing Automation Testing and CI/CD on The Forum Discussion Application** submission (the final submission).
