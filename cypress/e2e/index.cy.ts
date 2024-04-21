@@ -14,12 +14,12 @@ describe('The Index Page Test', () => {
     cy.get('a').contains('Forumy');
     cy.get(navHeaderBtn).should('be.visible');
 
-    cy.get('h2').contains('Kategori popular');
+    cy.get('h2').contains('Popular Categories');
 
     cy.get('p').contains('#redux');
     cy.get('p').contains('#intro');
 
-    cy.get('h2').contains('Diskusi tersedia');
+    cy.get('h2').contains('List of Discussions');
 
     cy.get(filterThreadsInput).should('be.visible');
 
