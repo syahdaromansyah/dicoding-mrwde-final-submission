@@ -117,7 +117,9 @@ describe('The Detail Thread Page Test', () => {
       cy.get('p').contains('Login first before commenting').should('not.exist');
 
       cy.get(commentInput).should('be.visible');
-      cy.get(sendCommentBtn).should('be.visible');
+      cy.get(sendCommentBtn)
+        .should('be.visible')
+        .should('have.text', 'Send Comment');
 
       cy.get('h3').contains('Commentary (1)');
       cy.get('h2').contains('Foo Doe');
