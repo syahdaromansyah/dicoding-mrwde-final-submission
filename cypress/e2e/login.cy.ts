@@ -44,7 +44,7 @@ describe('The Login Page Test', () => {
 
     cy.get(emailInput).should('be.visible');
     cy.get(passInput).should('be.visible');
-    cy.get(loginBtn).should('be.visible');
+    cy.get(loginBtn).should('be.visible').should('have.text', 'Login');
   });
 
   it('should show an error alert when empty login inputs are empty', () => {
