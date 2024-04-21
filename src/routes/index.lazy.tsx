@@ -205,7 +205,7 @@ function Index() {
 
       <div>
         <h2 className="mb-4 font-space-grotesk text-xl font-bold md:text-2xl">
-          Kategori popular
+          Popular Categories
         </h2>
 
         <div className="mb-4 flex flex-wrap gap-2 border-b-2 border-gray-200 pb-4 dark:border-gray-800">
@@ -226,7 +226,7 @@ function Index() {
 
       <div>
         <h2 className="mb-4 font-space-grotesk text-3xl font-bold">
-          Diskusi tersedia
+          List of Discussions
         </h2>
 
         <div className="mb-4">
