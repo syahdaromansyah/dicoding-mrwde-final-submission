@@ -151,7 +151,7 @@ function Register() {
               type="submit"
               data-cy="register-btn"
             >
-              Submit
+              Register
             </Button>
           </p>
         </section>

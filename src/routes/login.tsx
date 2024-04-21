@@ -156,7 +156,7 @@ function LoginRoute() {
               type="submit"
               data-cy="login-btn"
             >
-              Submit
+              Login
             </Button>
           </p>
         </section>
