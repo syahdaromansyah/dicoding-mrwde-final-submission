@@ -15,5 +15,8 @@
 *.sln
 *.sw?
 
+public/mockServiceWorker.*
+src/routeTree.gen.*
+
 .temp/
 .tmp/
