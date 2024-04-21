@@ -49,7 +49,7 @@ describe('The Register Page Test', () => {
     cy.get(nameInput).should('be.visible');
     cy.get(emailInput).should('be.visible');
     cy.get(passInput).should('be.visible');
-    cy.get(registerBtn).should('be.visible');
+    cy.get(registerBtn).should('be.visible').should('have.text', 'Register');
   });
 
   it('should show an error alert when register inputs are empty', () => {
