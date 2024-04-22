@@ -13,10 +13,6 @@ const useFetchProfile = () => {
       setFetchOnce(() => true);
     }
   }, [dispatch, fetchOnce]);
-
-  return {
-    isDone: fetchOnce,
-  };
 };
 
 export default useFetchProfile;
