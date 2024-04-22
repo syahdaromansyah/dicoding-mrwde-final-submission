@@ -11,6 +11,7 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:@tanstack/eslint-plugin-query/recommended',
     'plugin:cypress/recommended',
+    'plugin:storybook/recommended',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
