@@ -8,30 +8,13 @@ const useLogOut = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { setProfile } = useProfileSlice();
+  const { resetProfile } = useProfileSlice();
   const { toast } = useToast();
 
   const logOut = () => {
     removeAccessToken();
 
-    dispatch(
-      setProfile({
-        profile: {
-          message: '',
-          status: '',
-          data: {
-            user: {
-              id: '',
-              name: '',
-              email: '',
-              avatar: '',
-            },
-          },
-        },
-        status: 'idle',
-        error: null,
-      }),
-    );
+    dispatch(resetProfile());
 
     toast({
       title: 'Log Out Account',
