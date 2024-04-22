@@ -1,9 +1,5 @@
-import { useAppDispatch, useAppSelector } from '@/rtk/hooks';
-import {
-  fetchProfile,
-  selectProfile,
-  setStatusFetch,
-} from '@/rtk/slices/profileSlice';
+import { useAppDispatch } from '@/rtk/hooks';
+import { fetchProfile } from '@/rtk/slices/profileSlice';
 import { useEffect, useState } from 'react';
 
 const useFetchProfile = () => {
@@ -11,25 +7,12 @@ const useFetchProfile = () => {
 
   const dispatch = useAppDispatch();
 
-  const { status } = useAppSelector(selectProfile);
-
   useEffect(() => {
     if (fetchOnce === false) {
+      dispatch(fetchProfile());
       setFetchOnce(() => true);
-
-      dispatch(
-        setStatusFetch({
-          status: 'idle',
-        }),
-      );
     }
   }, [dispatch, fetchOnce]);
-
-  useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchProfile());
-    }
-  }, [dispatch, status]);
 
   return {
     isDone: fetchOnce,
