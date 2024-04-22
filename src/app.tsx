@@ -6,6 +6,7 @@ import useFetchProfile from './hooks/useFetchProfile.ts';
 import useProfileSlice from './hooks/useProfileSlice.ts';
 import './index.css';
 import { routeTree } from './routeTree.gen.ts';
+import PageLayout from './routes-components/PageLayout.tsx';
 import { setupStore } from './rtk/store.ts';
 
 const router = createRouter({
@@ -23,29 +24,18 @@ declare module '@tanstack/react-router' {
 }
 
 function RouterApp() {
-  const { profile, statusProfile } = useProfileSlice();
-  const { isDone } = useFetchProfile();
+  const { profile } = useProfileSlice();
+  useFetchProfile();
 
-  return isDone &&
-    (statusProfile === 'succeeded' || statusProfile === 'failed') ? (
-    <RouterProvider
-      router={router}
-      context={{
-        authProfile: profile,
-      }}
-    />
-  ) : (
-    <RouterProvider
-      router={router}
-      context={{
-        authProfile: {
-          id: '',
-          name: '',
-          email: '',
-          avatar: '',
-        },
-      }}
-    />
+  return (
+    <PageLayout>
+      <RouterProvider
+        router={router}
+        context={{
+          authProfile: profile,
+        }}
+      />
+    </PageLayout>
   );
 }
 
