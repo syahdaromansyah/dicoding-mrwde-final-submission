@@ -16,5 +16,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install depedencies and do the automation testing
         run: |
-          yarn
-          yarn ci:test
+          npm install
+          npm run ci:test
