@@ -28,5 +28,6 @@
     "types": ["vitest/jsdom"]
   },
   "include": ["src", ".temp/root"],
+  "exclude": ["src/stories"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
