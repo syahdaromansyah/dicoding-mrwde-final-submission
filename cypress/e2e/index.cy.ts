@@ -1,5 +1,5 @@
 /**
- * E2E Scenario (1 Test Scenario)
+ * E2E Scenario
  * ~ The Index Page Test
  *   - should show the index page content
  */
@@ -17,22 +17,20 @@ describe('The Index Page Test', () => {
     cy.get('h2').contains('Popular Categories');
 
     cy.get('p').contains('#redux');
-    cy.get('p').contains('#intro');
+    cy.get('p').contains('#perkenalan');
 
     cy.get('h2').contains('List of Discussions');
 
     cy.get(filterThreadsInput).should('be.visible');
 
-    cy.get('h2').contains('Hello and Welcome to My Thread!');
+    cy.get('h2').contains(/Bagaimana pengalamanmu belajar Redux\?/i);
 
-    cy.contains(
-      'Hello there and welcome to my thread! Please introduce yourself in the comment below...',
+    cy.contains('Coba ceritakan dong');
+
+    cy.get('h2').contains(
+      /Halo! Selamat datang dan silakan perkenalkan diri kamu/i,
     );
 
-    cy.get('h2').contains('How was your experience when learning Redux?');
-
-    cy.contains(
-      'Please share your experience when learning Redux in the comment below...',
-    );
+    cy.contains('Bagaimana kabarmu? Semoga baik-baik saja ya.');
   });
 });
