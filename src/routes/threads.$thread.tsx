@@ -17,7 +17,7 @@ import {
   upVoteThread,
 } from '@/network-data/network-data';
 import DownVoteButton from '@/routes-components/DownVoteButton';
-import ThreadsCategories from '@/routes-components/ThreadsCategories';
+import ThreadCategoryText from '@/routes-components/ThreadCategoryText';
 import UpVoteButton from '@/routes-components/UpVoteButton';
 import Avatar from '@/routes-components/thread/Avatar';
 import Comment from '@/routes-components/thread/Comment';
@@ -359,9 +359,7 @@ function Thread() {
       {statusThread === 'succeeded' && thread.id !== '' ? (
         <article>
           <div className="mb-4">
-            <ThreadsCategories>
-              {thread.category.split(' ').join('').toLowerCase()}
-            </ThreadsCategories>
+            <ThreadCategoryText>{thread.category}</ThreadCategoryText>
           </div>
 
           <h2 className="mb-4 font-space-grotesk text-3xl font-bold md:text-4xl">
