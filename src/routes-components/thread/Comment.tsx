@@ -36,7 +36,7 @@ export default function Comment({
             } profile`}
           />
 
-          {comment.owner.name}
+          {comment.owner.id}
         </h2>
 
         <div>
