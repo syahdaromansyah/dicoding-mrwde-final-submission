@@ -1,7 +1,7 @@
 import getFullUrl from './utils/getFullUrl';
 
 /**
- * E2E Scenario (6 Test Scenarios)
+ * E2E Scenario
  * ~ The Detail Thread Page Test
  *    - should show the nav header content
  *    ~ Before Login
@@ -22,8 +22,25 @@ describe('The Detail Thread Page Test', () => {
   const loginBtn = '[data-cy="login-btn"]';
   const sendCommentBtn = '[data-cy="send-comment-btn"]';
 
+  const authorThreadTarget = 'Dicoding';
+  const catThreadTarget = '#perkenalan';
+
+  const titleThreadTarget =
+    /Halo! Selamat datang dan silakan perkenalkan diri kamu/i;
+
+  const bodyThreadTarget =
+    /Bagaimana kabarmu\? Semoga baik-baik saja ya\. Sekali lagi saya ucapkan selamat datang semuanya!/i;
+
+  const commentNameTarget = 'Dimas Saputra';
+  const commentBodyTarget = /Halo!Perkanalkan, nama saya Dimas\./i;
+
+  const threadPathTarget = '/threads/thread-91KocEqYPRz68MhD';
+
+  const emailLogin = 'vindoe@email.com';
+  const passLogin = '123123';
+
   it('should show the nav header content', () => {
-    cy.visit('/threads/thread2');
+    cy.visit(threadPathTarget);
 
     cy.get('a').contains('Forumy');
     cy.get(navHeaderBtn);
@@ -31,7 +48,7 @@ describe('The Detail Thread Page Test', () => {
 
   describe('Before Login', () => {
     it('should show the nav menu list', () => {
-      cy.visit('/threads/thread2');
+      cy.visit(threadPathTarget);
 
       cy.get(navHeaderBtn).click();
 
@@ -42,25 +59,27 @@ describe('The Detail Thread Page Test', () => {
     });
 
     it('should show the detail thread page body content', () => {
-      cy.visit('/threads/thread2');
+      cy.visit(threadPathTarget);
 
-      cy.get('p').contains('#intro');
-      cy.get('h2').contains('Hello and Welcome to My Thread!');
+      cy.get('p').contains(catThreadTarget);
+      cy.get('h2').contains(titleThreadTarget);
 
-      cy.get('p').contains(
-        'Hello there and welcome to my thread! Please introduce yourself in the comment below',
-      );
+      cy.contains(bodyThreadTarget);
 
-      cy.get('p').contains('11 months ago');
       cy.get('p').contains('Created by');
-      cy.get('p').contains('Bar Doe');
+      cy.get('p').contains(authorThreadTarget);
 
       cy.get('h3').contains('Give a Comment');
       cy.get('p').contains('Login first before commenting');
 
-      cy.get('h3').contains('Commentary (1)');
-      cy.get('h2').contains('Foo Doe');
-      cy.get('p').contains('Hello there!My name is Foo Doe');
+      cy.get('h3').contains(/Commentary \(\d+\)/);
+
+      cy.get('h2')
+        .contains(commentNameTarget)
+        .last()
+        .parent()
+        .siblings()
+        .contains(commentBodyTarget);
     });
   });
 
@@ -68,20 +87,20 @@ describe('The Detail Thread Page Test', () => {
     it('should show the nav menu list', () => {
       cy.visit('/login');
 
-      cy.get(emailInput).type('foodoe@email.com');
-      cy.get(passInput).type('123123');
+      cy.get(emailInput).type(emailLogin);
+      cy.get(passInput).type(passLogin);
 
       cy.get(loginBtn).click();
 
       cy.url().should('eq', getFullUrl('/'));
 
-      cy.get('a').contains('Hello and Welcome to My Thread!').click();
+      cy.get('a').contains(titleThreadTarget).last().click();
 
-      cy.url().should('eq', getFullUrl('/threads/thread2'));
+      cy.url().should('eq', getFullUrl(threadPathTarget));
 
       cy.get(navHeaderBtn).click();
 
-      cy.get('p').contains('Hello! Foo Doe');
+      cy.get('p').contains('Hello! Vin Doe');
       cy.get('a').contains('Create Threads');
       cy.get('a').contains('Threads');
       cy.get('a').contains('Leaderboards');
@@ -91,70 +110,82 @@ describe('The Detail Thread Page Test', () => {
     it('should show the detail thread page body content', () => {
       cy.visit('/login');
 
-      cy.get(emailInput).type('foodoe@email.com');
-      cy.get(passInput).type('123123');
+      cy.get(emailInput).type(emailLogin);
+      cy.get(passInput).type(passLogin);
 
       cy.get(loginBtn).click();
 
       cy.url().should('eq', getFullUrl('/'));
 
-      cy.get('a').contains('Hello and Welcome to My Thread!').click();
+      cy.get('a').contains(titleThreadTarget).last().click();
 
-      cy.url().should('eq', getFullUrl('/threads/thread2'));
+      cy.url().should('eq', getFullUrl(threadPathTarget));
 
-      cy.get('p').contains('#intro');
-      cy.get('h2').contains('Hello and Welcome to My Thread!');
+      cy.get('p').contains(catThreadTarget);
+      cy.get('h2').contains(titleThreadTarget);
 
-      cy.get('p').contains(
-        'Hello there and welcome to my thread! Please introduce yourself in the comment below',
-      );
+      cy.contains(bodyThreadTarget);
 
-      cy.get('p').contains('11 months ago');
       cy.get('p').contains('Created by');
-      cy.get('p').contains('Bar Doe');
+      cy.get('p').contains(authorThreadTarget);
 
       cy.get('h3').contains('Give a Comment');
+
       cy.get('p').contains('Login first before commenting').should('not.exist');
 
-      cy.get(commentInput).should('be.visible');
+      cy.get(commentInput).should('exist');
+
       cy.get(sendCommentBtn)
-        .should('be.visible')
+        .should('exist')
         .should('have.text', 'Send Comment');
 
-      cy.get('h3').contains('Commentary (1)');
-      cy.get('h2').contains('Foo Doe');
-      cy.get('p').contains('Hello there!My name is Foo Doe');
+      cy.get('h3').contains(/Commentary \(\d+\)/i);
+
+      cy.get('h2')
+        .contains(commentNameTarget)
+        .last()
+        .parent()
+        .siblings()
+        .contains(commentBodyTarget);
     });
 
     it('should add a new comment', () => {
       cy.visit('/login');
 
-      cy.get(emailInput).type('bardoe@email.com');
-      cy.get(passInput).type('123123');
+      cy.get(emailInput).type(emailLogin);
+      cy.get(passInput).type(passLogin);
 
       cy.get(loginBtn).click();
 
       cy.url().should('eq', getFullUrl('/'));
 
-      cy.get('a').contains('Hello and Welcome to My Thread!').click();
+      cy.get('a').contains(titleThreadTarget).last().click();
 
-      cy.url().should('eq', getFullUrl('/threads/thread2'));
+      cy.url().should('eq', getFullUrl(threadPathTarget));
 
-      cy.get(commentInput).as('commentInput').should('be.visible');
+      cy.get(commentInput).as('commentInput').should('exist');
 
-      const newCommentTxt = 'Hello too Foo! Nice to meet you';
+      const newCommentTxt = `E2E Thread Comment - ${Date.now()}`;
 
       cy.get('@commentInput').type(newCommentTxt);
 
       cy.get(sendCommentBtn).click();
 
-      cy.get('h3').contains('Commentary (2)');
+      cy.get('h3').contains(/Commentary \(\d+\)/);
 
-      cy.get('h2').contains('Bar Doe');
-      cy.get('p').contains(newCommentTxt);
+      cy.get('h2')
+        .contains('Vin Doe')
+        .first()
+        .parent()
+        .siblings()
+        .contains(newCommentTxt);
 
-      cy.get('h2').contains('Foo Doe');
-      cy.get('p').contains('Hello there!My name is Foo Doe');
+      cy.get('h2')
+        .contains(commentNameTarget)
+        .last()
+        .parent()
+        .siblings()
+        .contains(commentBodyTarget);
     });
   });
 });

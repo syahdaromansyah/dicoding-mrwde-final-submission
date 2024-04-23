@@ -1,8 +1,8 @@
 import { useAppSelector } from '@/rtk/hooks';
 import {
   fetchProfile,
+  resetProfile,
   selectProfile,
-  setProfile,
 } from '@/rtk/slices/profileSlice';
 
 const useProfileSlice = () => {
@@ -10,9 +10,9 @@ const useProfileSlice = () => {
 
   return {
     profile: profile.data.user,
-    fetchProfile,
     statusProfile: status,
-    setProfile,
+    fetchProfile,
+    resetProfile,
   };
 };
 

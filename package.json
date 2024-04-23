@@ -16,7 +16,7 @@
     "test:no-watch": "vitest --watch=false",
     "cy:open": "cypress open",
     "e2e": "cypress run",
-    "ci:test": "vitest --watch=false && start-server-and-test dev:msw http://localhost:5173 e2e",
+    "ci:test": "vitest --watch=false && start-server-and-test dev http://localhost:5173 e2e",
     "prepare": "husky",
     "storybook": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build"

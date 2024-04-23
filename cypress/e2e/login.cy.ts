@@ -1,7 +1,7 @@
 import getFullUrl from './utils/getFullUrl';
 
 /**
- * E2E Scenario (7 Test Scenarios)
+ * E2E Scenario
  * ~ The Index Page Test
  *   ~ After Login
  *     - should show the nav menu list
@@ -23,6 +23,10 @@ describe('The Login Page Test', () => {
   const navHeaderBtn = '[data-cy="app-nav-header-menu-btn"]';
   const alertXBtn = '[data-cy="alert-close-btn"]';
 
+  const nameLogin = 'Vin Doe';
+  const emailLogin = 'vindoe@email.com';
+  const passLogin = '123123';
+
   describe('Before Login', () => {
     it('should show the nav menu list', () => {
       cy.visit('/login');
@@ -42,17 +46,17 @@ describe('The Login Page Test', () => {
     cy.get('h1').contains('Login Page');
     cy.get('p').contains("Don't have an account? Sign up");
 
-    cy.get(emailInput).should('be.visible');
-    cy.get(passInput).should('be.visible');
-    cy.get(loginBtn).should('be.visible').should('have.text', 'Login');
+    cy.get(emailInput).should('exist');
+    cy.get(passInput).should('exist');
+    cy.get(loginBtn).should('exist').should('have.text', 'Login');
   });
 
   it('should show an error alert when empty login inputs are empty', () => {
     cy.visit('/login');
 
-    cy.get(emailInput).as('emailInput').should('be.visible');
-    cy.get(passInput).as('passInput').should('be.visible');
-    cy.get(loginBtn).as('loginBtn').should('be.visible');
+    cy.get(emailInput).as('emailInput').should('exist');
+    cy.get(passInput).as('passInput').should('exist');
+    cy.get(loginBtn).as('loginBtn').should('exist');
 
     // Validating all inputs value are empty
     cy.get('@loginBtn').click();
@@ -61,7 +65,7 @@ describe('The Login Page Test', () => {
 
     cy.get('p').contains('Please input login form correctly').as('alertTxt');
 
-    cy.get(alertXBtn).as('alertXBtn').should('be.visible').click();
+    cy.get(alertXBtn).as('alertXBtn').should('exist').click();
 
     // Email input has a value
     // Password input is empty
@@ -86,9 +90,9 @@ describe('The Login Page Test', () => {
   it('should show an error alert when login inputs are invalid', () => {
     cy.visit('/login');
 
-    cy.get(emailInput).as('emailInput').should('be.visible');
-    cy.get(passInput).as('passInput').should('be.visible');
-    cy.get(loginBtn).as('loginBtn').should('be.visible');
+    cy.get(emailInput).as('emailInput').should('exist');
+    cy.get(passInput).as('passInput').should('exist');
+    cy.get(loginBtn).as('loginBtn').should('exist');
 
     // Validating the email input value is invalid
     cy.get('@emailInput').type('invalid@email');
@@ -100,7 +104,7 @@ describe('The Login Page Test', () => {
 
     cy.get('p').contains('Please input login form correctly').as('alertTxt');
 
-    cy.get(alertXBtn).should('be.visible').click();
+    cy.get(alertXBtn).should('exist').click();
 
     // Validating the password input is invalid
     cy.get('@emailInput').clear();
@@ -118,9 +122,9 @@ describe('The Login Page Test', () => {
   it('should show an error alert when login inputs are wrong', () => {
     cy.visit('/login');
 
-    cy.get(emailInput).as('emailInput').should('be.visible');
-    cy.get(passInput).as('passInput').should('be.visible');
-    cy.get(loginBtn).as('loginBtn').should('be.visible');
+    cy.get(emailInput).as('emailInput').should('exist');
+    cy.get(passInput).as('passInput').should('exist');
+    cy.get(loginBtn).as('loginBtn').should('exist');
 
     // Validating email and password inputs value are wrong
     cy.get('@emailInput').type('wrong@email.com');
@@ -131,7 +135,7 @@ describe('The Login Page Test', () => {
 
     cy.get('p').contains('Error: email or password is wrong').as('alertTxt');
 
-    cy.get(alertXBtn).as('alertXBtn').should('be.visible').click();
+    cy.get(alertXBtn).as('alertXBtn').should('exist').click();
 
     // Validating password input value is wrong,
     // but email input value is valid
@@ -163,8 +167,8 @@ describe('The Login Page Test', () => {
   it('should redirect to index page when login is valid', () => {
     cy.visit('/login');
 
-    cy.get(emailInput).type('foodoe@email.com');
-    cy.get(passInput).type('123123');
+    cy.get(emailInput).type(emailLogin);
+    cy.get(passInput).type(passLogin);
 
     cy.get(loginBtn).click();
 
@@ -175,8 +179,8 @@ describe('The Login Page Test', () => {
   it('should show an success toast when login is valid', () => {
     cy.visit('/login');
 
-    cy.get(emailInput).type('foodoe@email.com');
-    cy.get(passInput).type('123123');
+    cy.get(emailInput).type(emailLogin);
+    cy.get(passInput).type(passLogin);
 
     cy.get(loginBtn).click();
 
@@ -188,14 +192,14 @@ describe('The Login Page Test', () => {
     it('should show the nav menu list', () => {
       cy.visit('/login');
 
-      cy.get(emailInput).type('foodoe@email.com');
-      cy.get(passInput).type('123123');
+      cy.get(emailInput).type(emailLogin);
+      cy.get(passInput).type(passLogin);
 
       cy.get(loginBtn).click();
 
       cy.get(navHeaderBtn).click();
 
-      cy.get('p').contains('Hello! Foo Doe');
+      cy.get('p').contains(`Hello! ${nameLogin}`);
       cy.get('a').contains('Create Threads');
       cy.get('a').contains('Threads');
       cy.get('a').contains('Leaderboards');

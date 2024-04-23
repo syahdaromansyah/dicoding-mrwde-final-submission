@@ -11,7 +11,7 @@ import {
   upVoteThread,
 } from '@/network-data/network-data';
 import DownVoteButton from '@/routes-components/DownVoteButton';
-import ThreadsCategories from '@/routes-components/ThreadsCategories';
+import ThreadCategoryText from '@/routes-components/ThreadCategoryText';
 import UpVoteButton from '@/routes-components/UpVoteButton';
 import CategorySkeleton from '@/routes-components/threads/CategorySkeleton';
 import ThreadNotFound from '@/routes-components/threads/ThreadNotFound';
@@ -211,12 +211,7 @@ function Index() {
         <div className="mb-4 flex flex-wrap gap-2 border-b-2 border-gray-200 pb-4 dark:border-gray-800">
           {statusThreads === 'succeeded' ? (
             [...unDuplicateCategory].map((category) => (
-              <p
-                key={category}
-                className="inline-block rounded-md border border-gray-300 px-2 py-1 dark:border-gray-600"
-              >
-                #{category.split(' ').join('').toLowerCase()}
-              </p>
+              <ThreadCategoryText key={category}>{category}</ThreadCategoryText>
             ))
           ) : (
             <CategorySkeleton />
@@ -262,9 +257,9 @@ function Index() {
                     key={thread.id}
                   >
                     <div className="mb-2">
-                      <ThreadsCategories>
+                      <ThreadCategoryText>
                         {thread.category.split(' ').join('')}
-                      </ThreadsCategories>
+                      </ThreadCategoryText>
                     </div>
 
                     <h2 className="mb-2">
