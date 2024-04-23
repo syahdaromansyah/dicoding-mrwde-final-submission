@@ -1,23 +1,16 @@
 import getFullUrl from './utils/getFullUrl';
 
 /**
- * E2E Scenario (9 Test Scenarios)
- * ~ The Creating Thread Page Test
- *    ~ Before Login
- *      - should redirect to the login page
- *    ~ After Login
- *      - should not redirect to the login page
- *      - should not redirect to the login page,
- *        when visiting the creating thread page directly
- *      - should show the creating thread page body content
- *      - should show an error alert when input form is empty
- *      - should show an success toast,
- *        when creating thread is success
- *      - should redirect to a new detail thread page,
- *        after creating a thread
- *      - should add a new comment in a new thread page
- *      - should available in the threads page,
- *        after creating a new thread
+ * E2E Scenario
+ * ~ The Create Thread Page Test
+ *    - should not redirect to the login page
+ *    - should show the creating thread page body content
+ *    - should show an error alert when input form is empty
+ *    - should show an success toast when creating thread is success
+ *    - should redirect to a new detail thread page after creating a thread
+ *    - should add a new comment in a new thread page
+ *    - should available in the threads page after creating a new thread
+ *    -
  */
 
 describe('The Creating Thread Page Test', () => {
@@ -36,301 +29,301 @@ describe('The Creating Thread Page Test', () => {
   const createBtn = '[data-cy="create-btn"]';
   const sendCommentBtn = '[data-cy="send-comment-btn"]';
 
-  describe('Before Login', () => {
-    it('should redirect to the login page', () => {
-      cy.visit('/new');
-      cy.url().should('include', getFullUrl('/login?redirect'));
-    });
+  const nameLogin = 'Vin Doe';
+  const emailLogin = 'vindoe@email.com';
+  const passLogin = '123123';
+
+  const genTitleThread = () => `E2E-${emailLogin}-Thread-Title-${Date.now()}`;
+  const genBodyThread = () => `E2E-${emailLogin}-Thread-Body-${Date.now()}`;
+
+  it('should not redirect to the login page', () => {
+    cy.visit('/login');
+
+    cy.get(emailInput).type(emailLogin);
+    cy.get(passInput).type(passLogin);
+
+    cy.get(loginBtn).click();
+
+    cy.url().should('eq', getFullUrl('/'));
+
+    cy.get(navHeaderBtn).click();
+
+    cy.get('a').contains('Create Thread').click();
+
+    cy.url().should('eq', getFullUrl('/new'));
+    cy.url().should('not.include', getFullUrl('/login'));
   });
 
-  describe('After Login', () => {
-    it('should not redirect to the login page', () => {
-      cy.visit('/login');
+  it('should show the creating thread page body content', () => {
+    cy.visit('/login');
 
-      cy.get(emailInput).type('foodoe@email.com');
-      cy.get(passInput).type('123123');
+    cy.get(emailInput).type(emailLogin);
+    cy.get(passInput).type(passLogin);
 
-      cy.get(loginBtn).click();
+    cy.get(loginBtn).click();
 
-      cy.url().should('eq', getFullUrl('/'));
+    cy.get(navHeaderBtn).click();
 
-      cy.get(navHeaderBtn).click();
+    cy.get('a').contains('Create Thread').click();
 
-      cy.get('a').contains('Create Thread').click();
+    // Verifying the body page content
+    cy.get('h1').contains('What your words at current moment?');
 
-      cy.url().should('eq', getFullUrl('/new'));
-    });
+    cy.get(titleInput).should('exist');
+    cy.get(catInput).should('exist');
+    cy.get(bodyInput).should('exist');
+    cy.get(createBtn).should('exist');
+  });
 
-    it('should not redirect to the login page when visiting the creating thread page directly', () => {
-      cy.visit('/login');
+  it('should show an error alert when input form is empty', () => {
+    // Login first before adding a new thread
+    cy.visit('/login');
 
-      cy.get(emailInput).type('foodoe@email.com');
-      cy.get(passInput).type('123123');
+    cy.get(emailInput).type(emailLogin);
+    cy.get(passInput).type(passLogin);
 
-      cy.get(loginBtn).click();
+    cy.get(loginBtn).click();
 
-      cy.url().should('eq', getFullUrl('/'));
+    // Going to the creating thread page
+    cy.get(navHeaderBtn).click();
+    cy.get('a').contains('Create Thread').click();
 
-      cy.visit('/new');
+    // Creating an alias for the inputs form
+    cy.get(titleInput).as('titleInput').should('exist');
+    cy.get(catInput).as('catInput').should('exist');
+    cy.get(bodyInput).as('bodyInput').should('exist');
+    cy.get(createBtn).as('createBtn').should('exist');
 
-      cy.url().should('eq', getFullUrl('/new'));
-      cy.url().should('not.eq', getFullUrl('/login'));
-    });
+    // Showing an error alert when all inputs is empty
+    cy.get('@createBtn').click();
 
-    it('should show the creating thread page body content', () => {
-      cy.visit('/login');
+    cy.get('h5').contains('Heads up!').as('alertTitle');
 
-      cy.get(emailInput).type('foodoe@email.com');
-      cy.get(passInput).type('123123');
+    cy.get('p').contains('Please input thread form correctly').as('alertTxt');
 
-      cy.get(loginBtn).click();
+    cy.get(alertXBtn).as('alertXBtn').click();
 
-      cy.get(navHeaderBtn).click();
+    // Showing an error alert when each input is empty
+    // Title input has a value
+    // Category and body inputs are empty
+    cy.get('@titleInput').type('New Title Thread');
+    cy.get('@createBtn').click();
 
-      cy.get('a').contains('Create Thread').click();
+    cy.get('@alertTitle');
+    cy.get('@alertTxt');
+    cy.get('@alertXBtn').click();
 
-      cy.get('h1').contains('What your words at current moment?');
+    // Title and category inputs have a value
+    // Body input is empty
+    cy.get('@titleInput').clear();
+    cy.get('@catInput').clear();
+    cy.get('@bodyInput').clear();
 
-      cy.get(titleInput).should('be.visible');
-      cy.get(catInput).should('be.visible');
-      cy.get(bodyInput).should('be.visible');
-      cy.get(createBtn).should('be.visible');
-    });
+    cy.get('@titleInput').type('New Title Thread');
+    cy.get('@catInput').type('New Cat Thread');
+    cy.get('@createBtn').click();
 
-    it('should show an error alert when input form is empty', () => {
-      // Login first before adding a new thread
-      cy.visit('/login');
+    cy.get('@alertTitle');
+    cy.get('@alertTxt');
+    cy.get('@alertXBtn').click();
 
-      cy.get(emailInput).type('foodoe@email.com');
-      cy.get(passInput).type('123123');
+    // Title and body inputs have a value
+    // Category input is empty
+    cy.get('@titleInput').clear();
+    cy.get('@catInput').clear();
+    cy.get('@bodyInput').clear();
 
-      cy.get(loginBtn).click();
+    cy.get('@titleInput').type('New Title Thread');
+    cy.get('@bodyInput').type('New Body Thread');
+    cy.get('@createBtn').click();
 
-      // Going to the creating thread page
-      cy.get(navHeaderBtn).click();
-      cy.get('a').contains('Create Thread').click();
+    cy.get('@alertTitle');
+    cy.get('@alertTxt');
+    cy.get('@alertXBtn').click();
 
-      // Creating an alias for the inputs form
-      cy.get(titleInput).as('titleInput').should('be.visible');
-      cy.get(catInput).as('catInput').should('be.visible');
-      cy.get(bodyInput).as('bodyInput').should('be.visible');
-      cy.get(createBtn).as('createBtn').should('be.visible');
+    // Category input has a value
+    // Title and body inputs are empty
+    cy.get('@titleInput').clear();
+    cy.get('@catInput').clear();
+    cy.get('@bodyInput').clear();
 
-      // Showing an error alert when all inputs is empty
-      cy.get('@createBtn').click();
+    cy.get('@catInput').type('New Cat Thread');
+    cy.get('@createBtn').click();
 
-      cy.get('h5').contains('Heads up!').as('alertTitle');
+    cy.get('@alertTitle');
+    cy.get('@alertTxt');
+    cy.get('@alertXBtn').click();
 
-      cy.get('p').contains('Please input thread form correctly').as('alertTxt');
+    // Category and body inputs have a value
+    // Title input is empty
+    cy.get('@titleInput').clear();
+    cy.get('@catInput').clear();
+    cy.get('@bodyInput').clear();
 
-      cy.get(alertXBtn).as('alertXBtn').click();
+    cy.get('@catInput').type('New Cat Thread');
+    cy.get('@bodyInput').type('New Body Thread');
+    cy.get('@createBtn').click();
 
-      // Showing an error alert when each input is empty
-      // Title input has a value
-      // Category and body inputs are empty
-      cy.get('@titleInput').type('New Title Thread');
-      cy.get('@createBtn').click();
+    cy.get('@alertTitle');
+    cy.get('@alertTxt');
+    cy.get('@alertXBtn').click();
 
-      cy.get('@alertTitle');
-      cy.get('@alertTxt');
-      cy.get('@alertXBtn').click();
+    // Body input has a a value
+    // Title and category inputs are empty
+    cy.get('@titleInput').clear();
+    cy.get('@catInput').clear();
+    cy.get('@bodyInput').clear();
 
-      // Title and category inputs have a value
-      // Body input is empty
-      cy.get('@titleInput').clear();
-      cy.get('@catInput').clear();
-      cy.get('@bodyInput').clear();
+    cy.get('@bodyInput').type('New Body Thread');
+    cy.get('@createBtn').click();
 
-      cy.get('@titleInput').type('New Title Thread');
-      cy.get('@catInput').type('New Cat Thread');
-      cy.get('@createBtn').click();
+    cy.get('@alertTitle');
+    cy.get('@alertTxt');
+    cy.get('@alertXBtn');
+  });
 
-      cy.get('@alertTitle');
-      cy.get('@alertTxt');
-      cy.get('@alertXBtn').click();
+  it('should show an success toast when creating thread is success', () => {
+    cy.visit('/login');
 
-      // Title and body inputs have a value
-      // Category input is empty
-      cy.get('@titleInput').clear();
-      cy.get('@catInput').clear();
-      cy.get('@bodyInput').clear();
+    cy.get(emailInput).type(emailLogin);
+    cy.get(passInput).type(passLogin);
 
-      cy.get('@titleInput').type('New Title Thread');
-      cy.get('@bodyInput').type('New Body Thread');
-      cy.get('@createBtn').click();
+    cy.get(loginBtn).click();
 
-      cy.get('@alertTitle');
-      cy.get('@alertTxt');
-      cy.get('@alertXBtn').click();
+    cy.get(navHeaderBtn).click();
 
-      // Category input has a value
-      // Title and body inputs are empty
-      cy.get('@titleInput').clear();
-      cy.get('@catInput').clear();
-      cy.get('@bodyInput').clear();
+    cy.get('a').contains('Create Thread').click();
 
-      cy.get('@catInput').type('New Cat Thread');
-      cy.get('@createBtn').click();
+    // Creating a new thread
+    const newTitleThread = genTitleThread();
 
-      cy.get('@alertTitle');
-      cy.get('@alertTxt');
-      cy.get('@alertXBtn').click();
+    cy.get(titleInput).type(genTitleThread());
+    cy.get(catInput).type('E2E Testing');
+    cy.get(bodyInput).type(genBodyThread());
 
-      // Category and body inputs have a value
-      // Title input is empty
-      cy.get('@titleInput').clear();
-      cy.get('@catInput').clear();
-      cy.get('@bodyInput').clear();
+    cy.get(createBtn).click();
 
-      cy.get('@catInput').type('New Cat Thread');
-      cy.get('@bodyInput').type('New Body Thread');
-      cy.get('@createBtn').click();
+    // Validating the success alert content
+    cy.contains('Creating Thread');
+    cy.contains(
+      `Thread with title "${newTitleThread}" is successfully created`,
+    );
+  });
 
-      cy.get('@alertTitle');
-      cy.get('@alertTxt');
-      cy.get('@alertXBtn').click();
+  it('should redirect to a new detail thread page after creating a thread', () => {
+    cy.visit('/login');
 
-      // Body input has a a value
-      // Title and category inputs are empty
-      cy.get('@titleInput').clear();
-      cy.get('@catInput').clear();
-      cy.get('@bodyInput').clear();
+    cy.get(emailInput).type(emailLogin);
+    cy.get(passInput).type(passLogin);
 
-      cy.get('@bodyInput').type('New Body Thread');
-      cy.get('@createBtn').click();
+    cy.get(loginBtn).click();
 
-      cy.get('@alertTitle');
-      cy.get('@alertTxt');
-      cy.get('@alertXBtn');
-    });
+    cy.get(navHeaderBtn).click();
 
-    it('should show an success toast when creating thread is success', () => {
-      // Login first before going to the creating a thread page
-      cy.visit('/login');
+    cy.get('a').contains('Create Thread').click();
 
-      cy.get(emailInput).type('foodoe@email.com');
-      cy.get(passInput).type('123123');
+    // Creating a new thread
+    const newTitleThread = genTitleThread();
+    const newBodyThread = genBodyThread();
 
-      cy.get(loginBtn).click();
+    cy.get(titleInput).type(newTitleThread);
+    cy.get(catInput).type('E2E Testing');
+    cy.get(bodyInput).type(newBodyThread);
 
-      cy.get(navHeaderBtn).click();
+    cy.get(createBtn).click();
 
-      cy.get('a').contains('Create Thread').click();
+    // Validating the URL path
+    cy.url().should('not.eq', getFullUrl('/new'));
+    cy.url().should('include', getFullUrl('/threads/thread-'));
 
-      // Creating a new thread
-      cy.get(titleInput).type('A New Thread');
-      cy.get(catInput).type('New Thread');
-      cy.get(bodyInput).type('# New Thread');
+    // Validating the new detail thread page
+    cy.get('p').contains('#e2etesting');
+    cy.get('h2').contains(newTitleThread);
 
-      cy.get(createBtn).click();
+    cy.contains(newBodyThread);
 
-      // Validating the success alert content
-      cy.contains('Creating Thread');
-      cy.contains('Thread with title "A New Thread" is successfully created');
-    });
+    cy.get('p').contains('Created by');
+    cy.get('p').contains(nameLogin);
 
-    it('should redirect to a new detail thread page after creating a thread', () => {
-      // Login first before going to the creating a thread page
-      cy.visit('/login');
+    cy.get('h3').contains('Give a Comment');
 
-      cy.get(emailInput).type('foodoe@email.com');
-      cy.get(passInput).type('123123');
+    cy.get(pageContentContainer).scrollTo('bottom');
 
-      cy.get(loginBtn).click();
+    cy.get(commentInput).should('exist');
+    cy.get(sendCommentBtn).should('exist');
 
-      cy.get(navHeaderBtn).click();
-      cy.get('a').contains('Create Thread').click();
+    cy.get('h3').contains(/Commentary \(\d+\)/);
+    cy.get('p').contains('There is no commentary yet.');
+  });
 
-      // Creating a new thread
-      cy.get(titleInput).type('A New Thread');
-      cy.get(catInput).type('New Thread');
-      cy.get(bodyInput).type('# New Thread');
+  it('should add a new comment in a new thread page', () => {
+    cy.visit('/login');
 
-      cy.get(createBtn).click();
+    cy.get(emailInput).type(emailLogin);
+    cy.get(passInput).type(passLogin);
 
-      // Validating the URL path
-      cy.url().should('not.eq', getFullUrl('/new'));
-      cy.url().should('include', getFullUrl('/threads/thread-'));
+    cy.get(loginBtn).click();
 
-      // Validating the new detail thread page
-      cy.get('p').contains('#newthread');
-      cy.get('h2').contains('A New Thread');
+    cy.get(navHeaderBtn).click();
 
-      cy.get('h1').contains('New Thread');
+    cy.get('a').contains('Create Thread').click();
 
-      cy.get('p').contains('Created by');
-      cy.get('p').contains('Foo Doe');
+    // Creating a new thread
+    const newTitleThread = genTitleThread();
+    const newBodyThread = genBodyThread();
 
-      cy.get('h3').contains('Give a Comment');
+    cy.get(titleInput).type(newTitleThread);
+    cy.get(catInput).type('E2E Testing');
+    cy.get(bodyInput).type(newBodyThread);
 
-      cy.get(pageContentContainer).scrollTo('bottom');
+    cy.get(createBtn).click();
 
-      cy.get(commentInput).should('be.visible');
-      cy.get(sendCommentBtn).should('be.visible');
+    // Adding a new comment in the new thread page
+    const newCommentContent = `E2E-${emailLogin}-Comment-Body-${Date.now()}`;
 
-      cy.get('h3').contains('Commentary (0)');
-      cy.get('p').contains('There is no commentary yet.');
-    });
+    cy.get(commentInput).type(newCommentContent);
+    cy.get(sendCommentBtn).click();
 
-    it('should add a new comment in a new thread page', () => {
-      // Login first before going to the creating a thread page
-      cy.visit('/login');
+    // Verifying a new comment is showed in the new
+    // thread page
+    cy.get('h3').contains(/Commentary \(\d+\)/);
 
-      cy.get(emailInput).type('foodoe@email.com');
-      cy.get(passInput).type('123123');
+    cy.get('h2').contains(nameLogin);
+    cy.get('p').contains(newCommentContent);
+  });
 
-      cy.get(loginBtn).click();
+  it('should available in the threads page after creating a new thread', () => {
+    cy.visit('/login');
 
-      cy.get(navHeaderBtn).click();
-      cy.get('a').contains('Create Thread').click();
+    cy.get(emailInput).type(emailLogin);
+    cy.get(passInput).type(passLogin);
 
-      // Creating a new thread
-      cy.get(titleInput).type('A New Thread');
-      cy.get(catInput).type('New Thread');
-      cy.get(bodyInput).type('# New Thread');
+    cy.get(loginBtn).click();
 
-      cy.get(createBtn).click();
+    cy.get(navHeaderBtn).click();
 
-      // Adding a new comment in the new thread page
-      const newCommentContent = 'This comment is just for testing only';
+    cy.get('a').contains('Create Thread').click();
 
-      cy.get(commentInput).type(newCommentContent);
-      cy.get(sendCommentBtn).click();
+    // Creating a new thread
+    const newTitleThread = genTitleThread();
+    const newBodyThread = genBodyThread();
 
-      // Verifying a new comment is showed in the new
-      // thread page
-      cy.get('h3').contains('Commentary (1)');
+    cy.get(titleInput).type(newTitleThread);
+    cy.get(catInput).type('E2E Testing');
+    cy.get(bodyInput).type(newBodyThread);
 
-      cy.get('h2').contains('Foo Doe');
-      cy.get('p').contains(newCommentContent);
-    });
+    cy.get(createBtn).click();
 
-    it('should available in the threads page after creating a new thread', () => {
-      // Login first before going to the creating a thread page
-      cy.visit('/login');
+    // Validating a new thread in the threads page
+    cy.url().should('include', getFullUrl('/threads/thread-'));
 
-      cy.get(emailInput).type('foodoe@email.com');
-      cy.get(passInput).type('123123');
+    cy.get('a').contains('Forumy').click();
 
-      cy.get(loginBtn).click();
+    cy.url().should('eq', getFullUrl('/'));
 
-      cy.get(navHeaderBtn).click();
-      cy.get('a').contains('Create Thread').click();
+    cy.contains(/list of discussions/i);
 
-      // Creating a new thread
-      cy.get(titleInput).type('A New Thread');
-      cy.get(catInput).type('New Thread');
-      cy.get(bodyInput).type('# New Thread');
-
-      cy.get(createBtn).click();
-
-      // Validating a new thread in the threads page
-      cy.get('a').contains('Forumy').click();
-
-      cy.url().should('eq', getFullUrl('/'));
-
-      cy.get('h2').contains('A New Thread');
-      cy.contains('New Thread...');
-    });
+    cy.get('h2').contains(newTitleThread);
+    cy.contains(`${newBodyThread}...`);
   });
 });
